@@ -1,0 +1,30 @@
+{
+  "name": "blast",
+  "description": "Simple blast",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "webpack --config webpack.prod.js ",
+    "dev": "webpack-dev-server --config webpack.dev.js --open"
+  },
+  "author": "Anna Veller",
+  "devDependencies": {
+    "@babel/core": "^7.7.2",
+    "@babel/preset-env": "^7.7.1",
+    "@types/node": "^18.14.6",
+    "babel-loader": "^8.0.6",
+    "clean-webpack-plugin": "^3.0.0",
+    "file-loader": "^4.2.0",
+    "gulp-gh-pages": "^0.5.4",
+    "html-webpack-plugin": "^3.2.0",
+    "raw-loader": "^3.1.0",
+    "terser-webpack-plugin": "^2.2.1",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0",
+    "webpack-merge": "^4.2.2"
+  },
+  "dependencies": {
+    "gulp": "^4.0.2",
+    "phaser": "^3.50.0"
+  }
+}
