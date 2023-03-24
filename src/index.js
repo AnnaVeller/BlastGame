@@ -3,7 +3,7 @@ import GameScene from "./js/Scenes/GameScene"
 import BootScene from "./js/Scenes/BootScene"
 import StartScene from "./js/Scenes/StartScene"
 
-export const GAME_DEFAULT_SIZE = 1700
+export const GAME_DEFAULT_SIZE = 1400
 
 const game = new Phaser.Game(
   {
