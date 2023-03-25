@@ -17,7 +17,7 @@ export default class StartScene extends Phaser.Scene {
   }
 
   resize() {
-    // сцена продолжает работать, даже если мы ушли отсюда
+    // стоп ресайза, если ушли с этой сцены
     if (!this.scene.settings.active) return
 
     resize(this)

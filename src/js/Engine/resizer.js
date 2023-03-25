@@ -11,6 +11,11 @@ export function resize(state) {
 
   const scaleFactor = (isLandscape ? width : height) / GAME_DEFAULT_SIZE
   state.cameras.main.zoom = scaleFactor
+
+  const midX = state.cameras.main.midPoint.x
+  const midY = state.cameras.main.midPoint.y
+
+  return {height, width, scaleFactor, isLandscape, midX, midY}
 }
 
 export function getWorldView(camera) {
