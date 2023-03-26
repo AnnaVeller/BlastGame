@@ -11,8 +11,6 @@ export default class GameScene extends Phaser.Scene {
   init() {
     this.sprites = {}
     this.containers = {}
-
-    this.isEnable = true
   }
 
   create() {

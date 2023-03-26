@@ -15,6 +15,17 @@ export const FIELD_SIZE = {
   h: GAME_SETTINGS.cols * GAME_SETTINGS.size
 }
 
+export const GAME_LEVEL = [
+  [0, 0, 'blue', 'blue', 'blue', 'blue', 0, 0],
+  [0, 0, 'blue', 'blue', 'red', 'red', 0, 0],
+  [0, 0, 'blue', 'blue', 'red', 'blue', 0, 0],
+  [0, 0, 'red', 'red', 'red', 'red', 0, 0],
+  [0, 0, 'red', 0, 'red', 'blue', 0, 0],
+  [0, 0, 'red', 0, 'red', 'red', 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+]
+
 export const EVENTS = {
   blockTap: 'blockTap'
 }

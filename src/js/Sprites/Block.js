@@ -1,5 +1,5 @@
 import Sprite from "../Engine/Sprite"
-import {EVENTS} from "../config"
+import {EVENTS, GAME_SETTINGS} from "../config"
 
 export default class Block extends Sprite {
   constructor(game, config = {}) {
@@ -22,12 +22,16 @@ export default class Block extends Sprite {
     return this.color
   }
 
-  deleteAnimation(){
+  deleteAnimation() {
     this.game.tweens.add({
       targets: this.content,
       scaleX: 0,
       scaleY: 0,
       duration: 200,
+      onComplete: () => {
+        this.i = null
+        this.j = null
+      }
     })
   }
 
@@ -38,6 +42,26 @@ export default class Block extends Sprite {
       scaleY: {from: 1, to: 0.9},
       duration: 100,
       yoyo: true
+    })
+  }
+
+  // падение блока на yCount блоков
+  blockFall(yCount, oneTime = 150, delay = 0) {
+    console.log('start blockFall')
+
+    const newY = (this.i + yCount) * GAME_SETTINGS.size
+
+    this.game.tweens.add({
+      targets: this.content,
+      y: newY,
+      delay,
+      duration: yCount * oneTime,
+      onComplete: () => {
+        console.log('-----')
+        console.log(this.i, this.j)
+        this.i += yCount
+        console.log(this.i, this.j)
+      }
     })
   }
 
