@@ -1,4 +1,4 @@
-import {GAME_LEVEL, GAME_SETTINGS} from "../config"
+import {GAME_LEVEL, GAME_SETTINGS, IS_EXPORT_FIELD} from "../config"
 import Block from "./Block"
 
 export default class Field {
@@ -7,34 +7,20 @@ export default class Field {
     this.config = this.getObject(config)
     this.isEnable = true
 
-    // this.createBlocks()
-    this.exportBlocks()
+    const {cols, rows} = GAME_SETTINGS
+
+    this.container = this.game.add.container(this.config.x, this.config.y)
+    this.allBlocks = Array.from(Array(rows), () => new Array(cols))
+
+    this.createBlocks()
   }
 
-  exportBlocks() {
-    this.container = this.game.add.container(this.config.x, this.config.y)
-    this.allBlocks = Array.from(Array(GAME_LEVEL.length), () => new Array(GAME_LEVEL[0].length))
-
-    for (let i = GAME_LEVEL.length - 1; i >= 0; i--) {
-      for (let j = GAME_LEVEL[0].length - 1; j >= 0; j--) {
-        const block = new Block(this.game, {
-          x: j * GAME_SETTINGS.size,
-          y: i * GAME_SETTINGS.size,
-          i: i, j: j,
-          key: !GAME_LEVEL[i][j] ? 'green' : GAME_LEVEL[i][j]
-        })
-
-        this.container.add(block.content)
-        this.allBlocks[i][j] = block
-      }
-    }
+  exportColor(i, j) {
+    return !GAME_LEVEL[i][j] ? 'green' : GAME_LEVEL[i][j]
   }
 
   createBlocks() {
-    this.container = this.game.add.container(this.config.x, this.config.y)
-
     const {cols, rows, size, colors} = GAME_SETTINGS
-    this.allBlocks = Array.from(Array(rows), () => new Array(cols))
 
     for (let i = rows - 1; i >= 0; i--) {
       for (let j = cols - 1; j >= 0; j--) {
@@ -42,7 +28,7 @@ export default class Field {
           x: j * size,
           y: i * size,
           i: i, j: j,
-          key: this.getRandomColor(colors)
+          key: IS_EXPORT_FIELD ? this.exportColor(i, j) : this.getRandomColor(colors)
         })
 
         this.container.add(block.content)
@@ -66,16 +52,57 @@ export default class Field {
     const newBlocks = this.recursiveFind(mainBlock, [mainBlock])
 
 
-    // TODO переписать this.allBlocks, чтобы он обновлялся при удалении
-    if (newBlocks.length >= minCells) {
-      newBlocks.forEach(el => {
-        el.deleteAnimation()
-      })
-      const settings = this.getFallSettings(newBlocks)
-      this.drawFall(settings)
-    } else {
+    if (newBlocks.length < minCells) {
       this.enable()
+      return
     }
+
+    newBlocks.forEach(block => block.deleteAnimation())
+    const [fallArray, maxExecutionTime] = this.drawFall(this.getFallSettings(newBlocks))
+
+    fallArray.forEach(el => el.block.blockFall(el.yCount, el.oneTime, el.delay))
+    this.game.time.delayedCall(maxExecutionTime - 150, this.afterFall, [fallArray, newBlocks], this)
+    this.game.time.delayedCall(maxExecutionTime - 150 + 350, this.enable, [], this)
+  }
+
+  fillEmptyCells() {
+    const {cols, rows, size, colors} = GAME_SETTINGS
+
+    for (let i = rows - 1; i >= 0; i--) {
+      for (let j = cols - 1; j >= 0; j--) {
+        if (this.allBlocks[i][j]) continue
+
+        const block = new Block(this.game, {
+          x: j * size,
+          y: i * size,
+          i: i, j: j,
+          visible: false,
+          key: this.getRandomColor(colors)
+        })
+
+        this.container.add(block.content)
+        this.allBlocks[i][j] = block
+
+        block.spawnAnimation()
+      }
+    }
+
+  }
+
+  afterFall(fallArray, deletingArray) {
+    deletingArray.forEach(block => {
+      delete this.allBlocks[block.i][block.j]
+      this.allBlocks[block.i][block.j] = null
+    })
+
+    fallArray.forEach(el => {
+      this.allBlocks[el.block.i][el.block.j] = null
+
+      el.block.i += el.yCount
+      this.allBlocks[el.block.i][el.block.j] = el.block
+    })
+
+    this.fillEmptyCells()
   }
 
   // расставляет элементы по колонкам
@@ -106,7 +133,6 @@ export default class Field {
     return deltaY
   }
 
-
   getFallSettings([...deletingBLock]) {
     const settings = {}
     const cols = this.sortByCols(deletingBLock)
@@ -127,7 +153,6 @@ export default class Field {
     return settings
   }
 
-
   drawFall(settings) {
     // const settings = {
     //   14: [5],
@@ -136,27 +161,38 @@ export default class Field {
     //   55: [1, 0, 2, 0, 3]
     // }
 
+    const drawArray = []
+
     let maxExecutionTime = 0
     for (const [cell, conditions] of Object.entries(settings)) {
+
       for (let i = 0; i < conditions.length; i++) {
+        if (!conditions[i]) continue
+
         const timeExecution = i * 50 + 150 * conditions[i]
-        this.allBlocks[cell[0] - i - 1][cell[1]].blockFall(conditions[i], 150, i * 50)
+
+        // если поле не прямоугольное (напр. сложная форма)
+        if (!this.allBlocks[cell[0] - i - 1][cell[1]]) continue
+
+        drawArray.push({
+          block: this.allBlocks[cell[0] - i - 1][cell[1]],
+          oneTime: 120,
+          delay: i * 50,
+          yCount: conditions[i]
+        })
 
         if (maxExecutionTime < timeExecution) maxExecutionTime = timeExecution
       }
     }
 
-    console.log(maxExecutionTime)
-    this.game.time.delayedCall(maxExecutionTime + 100, this.enable, [], this)
+    return [drawArray, maxExecutionTime]
   }
 
   disable() {
-    console.log('Запрещен доступ')
     this.isEnable = false
   }
 
   enable() {
-    console.log('Разрешен доступ')
     this.isEnable = true
   }
 
@@ -196,7 +232,7 @@ export default class Field {
   isSameColor(i, j, color) {
     const {rows, cols} = GAME_SETTINGS
 
-    return i >= 0 && j >= 0 && i < rows && j < cols && this.allBlocks[i][j].color === color
+    return i >= 0 && j >= 0 && i < rows && j < cols && this.allBlocks[i][j] && this.allBlocks[i][j].color === color
   }
 
   getObject(config) {

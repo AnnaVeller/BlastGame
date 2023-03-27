@@ -15,7 +15,6 @@ export default class TextSprite {
       alpha: 1,
       delay,
       duration,
-      // hold: 1000,
     })
   }
 

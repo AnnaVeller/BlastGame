@@ -11,9 +11,13 @@ export default class Block extends Sprite {
 
     this.content.setInteractive()
     this.content.on('pointerdown', this.onTap, this)
+
+    this.isEnable = true // на клетку можно тапнуть
   }
 
   onTap() {
+    if (!this.isEnable) return
+
     this.pressBtnAnimation()
     this.game.events.emit(EVENTS.blockTap, this)
   }
@@ -23,15 +27,29 @@ export default class Block extends Sprite {
   }
 
   deleteAnimation() {
+    this.disable()
+
     this.game.tweens.add({
       targets: this.content,
       scaleX: 0,
       scaleY: 0,
       duration: 200,
-      onComplete: () => {
-        this.i = null
-        this.j = null
-      }
+    })
+  }
+
+  spawnAnimation() {
+    this.disable()
+
+    this.content.visible = true
+    this.content.setScale(0)
+
+    this.game.tweens.add({
+      targets: this.content,
+      scaleX: 1,
+      scaleY: 1,
+      ease: 'Sine.easeOut',
+      duration: 300,
+      onComplete: () => this.enable()
     })
   }
 
@@ -47,22 +65,24 @@ export default class Block extends Sprite {
 
   // падение блока на yCount блоков
   blockFall(yCount, oneTime = 150, delay = 0) {
-    console.log('start blockFall')
-
-    const newY = (this.i + yCount) * GAME_SETTINGS.size
+    this.disable()
 
     this.game.tweens.add({
       targets: this.content,
-      y: newY,
+      y: (this.i + yCount) * GAME_SETTINGS.size,
       delay,
       duration: yCount * oneTime,
-      onComplete: () => {
-        console.log('-----')
-        console.log(this.i, this.j)
-        this.i += yCount
-        console.log(this.i, this.j)
-      }
+      ease: 'Sine.easeIn',
+      onComplete: () => this.enable()
     })
+  }
+
+  disable() {
+    this.isEnable = false
+  }
+
+  enable() {
+    this.isEnable = true
   }
 
 

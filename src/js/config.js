@@ -1,3 +1,5 @@
+export const IS_EXPORT_FIELD = true
+
 export const GAME_SETTINGS = {
   rows: 8,
   cols: 8,
@@ -10,21 +12,27 @@ export const GAME_SETTINGS = {
   moves: 10, // кол-во ходов
 }
 
+export const GAME_LEVEL = [
+  [0, 0, 'blue', 'blue', 'blue', 'blue', 0, 0],
+  [0, 0, 'blue', 'blue', 'blue', 'blue', 0, 0],
+  [0, 0, 'yellow', 'yellow', 'yellow', 'yellow', 0, 0],
+  [0, 0, 'yellow', 'red', 'red', 'yellow', 0, 0],
+  [0, 0, 'yellow', 'red', 'red', 'yellow', 0, 0],
+  [0, 0, 'yellow', 'yellow', 'yellow', 'yellow', 0, 0],
+  [0, 0, 'blue', 'blue', 'blue', 'blue', 0, 0],
+  ['blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue'],
+]
+
+
+if (IS_EXPORT_FIELD) {
+  GAME_SETTINGS.rows = GAME_LEVEL.length
+  GAME_SETTINGS.cols = GAME_LEVEL[0].length
+}
+
 export const FIELD_SIZE = {
   w: GAME_SETTINGS.rows * GAME_SETTINGS.size,
   h: GAME_SETTINGS.cols * GAME_SETTINGS.size
 }
-
-export const GAME_LEVEL = [
-  [0, 0, 'blue', 'blue', 'blue', 'blue', 0, 0],
-  [0, 0, 'blue', 'blue', 'red', 'red', 0, 0],
-  [0, 0, 'blue', 'blue', 'red', 'blue', 0, 0],
-  [0, 0, 'red', 'red', 'red', 'red', 0, 0],
-  [0, 0, 'red', 0, 'red', 'blue', 0, 0],
-  [0, 0, 'red', 0, 'red', 'red', 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
-]
 
 export const EVENTS = {
   blockTap: 'blockTap'
