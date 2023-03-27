@@ -15,7 +15,7 @@ export function resize(state) {
   const midX = state.cameras.main.midPoint.x
   const midY = state.cameras.main.midPoint.y
 
-  return {height, width, scaleFactor, isLandscape, midX, midY}
+  return {height, width, scaleFactor, isLandscape, midX, midY, aspectRatio}
 }
 
 export function getWorldView(camera) {

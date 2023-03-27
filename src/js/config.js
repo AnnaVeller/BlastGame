@@ -8,7 +8,7 @@ export const GAME_SETTINGS = {
   availableColors: ['blue', 'green', 'purple', 'red', 'yellow'],
   colors: ['green', 'red', 'yellow'],
   countMix: 3, // кол-во перемешиваний
-  points: 10, // кол-во очков
+  points: 110, // кол-во очков
   moves: 10, // кол-во ходов
 }
 
@@ -29,13 +29,10 @@ if (IS_EXPORT_FIELD) {
   GAME_SETTINGS.cols = GAME_LEVEL[0].length
 }
 
-export const FIELD_SIZE = {
-  w: GAME_SETTINGS.rows * GAME_SETTINGS.size,
-  h: GAME_SETTINGS.cols * GAME_SETTINGS.size
-}
-
 export const EVENTS = {
-  blockTap: 'blockTap'
+  blockTap: 'blockTap',
+  moveDone: 'moveDone', // ход сделан
+  deleteBlocks: 'deleteBlocks',
 }
 
 export const SCENE_CONFIG = {
@@ -69,6 +66,16 @@ export const SCENE_CONFIG = {
       key: 'yellow',
       type: 'image',
       url: require('../assets/yellow.png'),
+    },
+    {
+      key: 'label',
+      type: 'image',
+      url: require('../assets/label.png'),
+    },
+    {
+      key: 'button',
+      type: 'image',
+      url: require('../assets/button.png'),
     },
   ]
 }

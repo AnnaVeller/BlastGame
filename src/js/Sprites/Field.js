@@ -1,4 +1,4 @@
-import {GAME_LEVEL, GAME_SETTINGS, IS_EXPORT_FIELD} from "../config"
+import {EVENTS, GAME_LEVEL, GAME_SETTINGS, IS_EXPORT_FIELD} from "../config"
 import Block from "./Block"
 
 export default class Field {
@@ -51,11 +51,14 @@ export default class Field {
 
     const newBlocks = this.recursiveFind(mainBlock, [mainBlock])
 
-
+    // не набрано минимальное кол-во одинаковых блоков рядом
     if (newBlocks.length < minCells) {
       this.enable()
       return
     }
+
+    this.game.events.emit(EVENTS.moveDone)
+    this.game.events.emit(EVENTS.deleteBlocks, newBlocks.length)
 
     newBlocks.forEach(block => block.deleteAnimation())
     const [fallArray, maxExecutionTime] = this.drawFall(this.getFallSettings(newBlocks))

@@ -9,19 +9,8 @@ export default class Button extends Sprite {
     this.onPointerDown(this.config.OnPointerdown)
   }
 
-  pressBtnAnimation() {
-    this.game.tweens.add({
-      targets: this.content,
-      scaleX: {from: 1, to: 0.9},
-      scaleY: {from: 1, to: 0.9},
-      duration: 100,
-      yoyo: true
-    })
-  }
-
   onPointerDown(func) {
     this.content.on('pointerdown', () => {
-      this.pressBtnAnimation()
       func && func()
     })
   }
@@ -52,7 +41,8 @@ export default class Button extends Sprite {
       origin: {x: 0.5, y: 0.5},
       interactive: false,
       name: '',
-      onPointerDown: ''
+      onPointerDown: '',
+      visible: true
     }, config)
   }
 }
