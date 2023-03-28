@@ -2,8 +2,9 @@ import Phaser from "phaser"
 import {getWorldView, resize} from "../Engine/resizer"
 import Field from "../Sprites/Field"
 import Label from "../Sprites/Label"
-import MixButton from "../Sprites/MixButton";
+import MixButton from "../Sprites/MixButton"
 import {EVENTS, GAME_SETTINGS} from "../config"
+import Sprite from "../Engine/Sprite"
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -22,14 +23,17 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create() {
+    new Sprite(this, {key: 'bg', origin: {x: 0, y: 0}})
+
     this.field = new Field(this, {x: 150, y: 150})
 
     this.labelPoints = new Label(this, {name: 'Очки', endCount: GAME_SETTINGS.points})
     this.labelMoves = new Label(this, {name: 'Ходы', beginCount: this.moves, endCount: this.moves})
-    this.labelMix = new MixButton(this, {})
+    this.labelMix = new MixButton(this, {beginCount: this.mixes, endCount: this.mixes})
 
     this.events.on(EVENTS.blockTap, (block) => {
       if (!this.isEnable) return
+
       this.field.deleteCloseBlocks(block)
     })
 
@@ -38,6 +42,7 @@ export default class GameScene extends Phaser.Scene {
 
       this.labelMoves.setText(--this.moves)
       this.moves === 0 && this.disable()
+      this.moves === 0 && this.labelMix.disableInteractive()
     })
 
     this.events.on(EVENTS.deleteBlocks, (count) => {
@@ -45,11 +50,16 @@ export default class GameScene extends Phaser.Scene {
       this.labelPoints.setText(this.points)
     })
 
+    this.events.on(EVENTS.pressShuffle, () => {
+      if (!this.isEnable || !this.field.isEnable) return
+
+      this.field.shuffle()
+      this.labelMix.setText(--this.mixes)
+      this.mixes === 0 && this.labelMix.disableInteractive()
+    })
+
     this.scale.on('resize', this.resize, this)
     this.resize(this.scale.gameSize)
-  }
-
-  update(time, delta) {
   }
 
   disable() {
@@ -58,6 +68,9 @@ export default class GameScene extends Phaser.Scene {
 
   enable() {
     this.isEnable = true
+  }
+
+  update(time, delta) {
   }
 
   resize() {

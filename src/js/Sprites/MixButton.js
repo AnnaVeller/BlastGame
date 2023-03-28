@@ -1,12 +1,13 @@
 import TextSprite from "../Engine/TextSprite"
 import Button from "../Engine/Button"
+import {EVENTS} from "../config"
 
 export default class MixButton {
   constructor(game, config = {}) {
     this.game = game
     this.config = this.getObject(config)
 
-    const label = new Button(this.game, {
+    this.button = new Button(this.game, {
       x: 0, y: 0,
       key: 'button',
       scale: {x: 0.6, y: 0.6},
@@ -29,18 +30,52 @@ export default class MixButton {
       textStyle: {font: '50px Monospace', fill: '#000000'},
     })
 
+    this.isEnable = true
+
     this.container = this.game.add.container(this.config.x, this.config.y)
-    this.container.add([label.content, name.content, this.counter.content])
+    this.container.add([this.button.content, name.content, this.counter.content])
   }
 
   pressBtn() {
+    if (!this.isEnable) return
+
+    this.game.events.emit(EVENTS.pressShuffle)
+
     this.game.tweens.add({
       targets: this.container,
       scaleX: {from: 1, to: 0.9},
       scaleY: {from: 1, to: 0.9},
       duration: 100,
-      yoyo: true
+      yoyo: true,
     })
+  }
+
+  changeInteractive(mode) {
+    if (mode) {
+      this.enableInteractive()
+    } else {
+      this.disableInteractive()
+    }
+  }
+
+  enable() {
+    this.isEnable = true
+  }
+
+  disable() {
+    this.isEnable = false
+  }
+
+  enableInteractive() {
+    this.enable()
+    this.button.content.setInteractive()
+    this.button.content.clearTint()
+  }
+
+  disableInteractive() {
+    this.disable()
+    this.button.content.removeInteractive()
+    this.button.content.tint = 0x808080
   }
 
   setText(num) {

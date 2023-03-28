@@ -15,6 +15,58 @@ export default class Field {
     this.createBlocks()
   }
 
+  shuffleArray(array) {
+    return array.sort(() => Math.random() - 0.5)
+  }
+
+  shuffle() {
+    this.disable()
+
+    const newBlocks = this.allBlocks.map((item) => [...item])
+
+    const indexArray = []
+
+    for (let i = 0; i < this.allBlocks.length; i++) {
+      for (let j = 0; j < this.allBlocks[0].length; j++) {
+        indexArray.push([i, j])
+      }
+    }
+
+    const shuffledArray = this.shuffleArray(indexArray)
+
+    const {cols, rows} = GAME_SETTINGS
+
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        const block = this.allBlocks[i][j]
+        const indexes = shuffledArray.pop()
+        block.i = indexes[0]
+        block.j = indexes[1]
+        newBlocks[block.i][block.j] = block
+      }
+    }
+
+    this.allBlocks = newBlocks
+
+    this.refreshField()
+  }
+
+  refreshField() {
+    const {cols, rows, size} = GAME_SETTINGS
+
+    for (let i = rows - 1; i >= 0; i--) {
+      for (let j = cols - 1; j >= 0; j--) {
+
+        // this.allBlocks[i][j].content.setPosition(j * size, i * size)
+        this.allBlocks[i][j].moveTo(j * size, i * size, 500)
+        this.container.bringToTop(this.allBlocks[i][j].content)
+
+      }
+    }
+
+    this.game.time.delayedCall(500, this.enable, [], this)
+  }
+
   exportColor(i, j) {
     return !GAME_LEVEL[i][j] ? 'green' : GAME_LEVEL[i][j]
   }
@@ -45,7 +97,6 @@ export default class Field {
 
   deleteCloseBlocks(mainBlock) {
     if (!this.isEnable) return
-    this.disable()
 
     const {minCells} = GAME_SETTINGS
 
@@ -53,12 +104,13 @@ export default class Field {
 
     // не набрано минимальное кол-во одинаковых блоков рядом
     if (newBlocks.length < minCells) {
-      this.enable()
       return
     }
 
     this.game.events.emit(EVENTS.moveDone)
     this.game.events.emit(EVENTS.deleteBlocks, newBlocks.length)
+
+    this.disable()
 
     newBlocks.forEach(block => block.deleteAnimation())
     const [fallArray, maxExecutionTime] = this.drawFall(this.getFallSettings(newBlocks))

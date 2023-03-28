@@ -6,7 +6,7 @@ export const GAME_SETTINGS = {
   size: 171,
   minCells: 2, // минимальное кол-во клеток для удаления
   availableColors: ['blue', 'green', 'purple', 'red', 'yellow'],
-  colors: ['green', 'red', 'yellow'],
+  colors: ['green', 'red', 'yellow', 'blue'],
   countMix: 3, // кол-во перемешиваний
   points: 110, // кол-во очков
   moves: 10, // кол-во ходов
@@ -33,6 +33,7 @@ export const EVENTS = {
   blockTap: 'blockTap',
   moveDone: 'moveDone', // ход сделан
   deleteBlocks: 'deleteBlocks',
+  pressShuffle: 'pressShuffle'
 }
 
 export const SCENE_CONFIG = {
@@ -76,6 +77,11 @@ export const SCENE_CONFIG = {
       key: 'button',
       type: 'image',
       url: require('../assets/button.png'),
+    },
+    {
+      key: 'bg',
+      type: 'image',
+      url: require('../assets/bg.jpg'),
     },
   ]
 }

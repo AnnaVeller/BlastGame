@@ -37,6 +37,17 @@ export default class Block extends Sprite {
     })
   }
 
+  moveTo(x, y, time) {
+    this.disable()
+
+    this.game.tweens.add({
+      targets: this.content,
+      x, y,
+      duration: time,
+      onComplete: () => this.enable()
+    })
+  }
+
   spawnAnimation() {
     this.disable()
 
