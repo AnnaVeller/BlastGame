@@ -17,14 +17,14 @@ export default class Label {
       alpha: 0.8,
       origin: {x: 0.5, y: 0.5},
       text: this.config.name,
-      textStyle: {font: '30px Monospace', fill: '#000000'},
+      fontSize: 30,
     })
 
     this.counter = new TextSprite(this.game, {
       x: 0, y: 12,
       origin: {x: 0.5, y: 0.5},
       text: `${this.config.beginCount}/${this.config.endCount}`,
-      textStyle: {font: '50px Monospace', fill: '#000000'},
+      fontSize: 40
     })
 
     this.container = this.game.add.container(this.config.x, this.config.y)
@@ -43,7 +43,6 @@ export default class Label {
       endCount: 10,
     }, config)
   }
-
 
 }
 

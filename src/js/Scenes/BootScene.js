@@ -1,5 +1,5 @@
 import Phaser from "phaser"
-import {SCENE_CONFIG} from "../config"
+import {RESOURCES} from "../config"
 
 // Сцена загрузки изображений
 export default class BootScene extends Phaser.Scene {
@@ -8,8 +8,9 @@ export default class BootScene extends Phaser.Scene {
   }
 
   preload() {
-    SCENE_CONFIG.sprites.forEach((el) => {
-      this.load.image(el.key, el.url)
+    RESOURCES.forEach((el) => {
+      el.type === 'image' && this.load.image(el.key, el.url)
+      el.type === 'font' && this.load.bitmapFont(el.key, el.url.png, el.url.xml)
     })
   }
 

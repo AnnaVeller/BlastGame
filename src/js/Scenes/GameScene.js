@@ -3,8 +3,8 @@ import {getWorldView, resize} from "../Engine/resizer"
 import Field from "../Sprites/Field"
 import Label from "../Sprites/Label"
 import MixButton from "../Sprites/MixButton"
-import {EVENTS, GAME_SETTINGS} from "../config"
 import Sprite from "../Engine/Sprite"
+import {EVENTS, GAME_SETTINGS} from "../config"
 
 export default class GameScene extends Phaser.Scene {
   constructor() {

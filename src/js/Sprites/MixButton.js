@@ -18,16 +18,14 @@ export default class MixButton {
     const name = new TextSprite(this.game, {
       x: 0, y: -28,
       alpha: 0.8,
-      origin: {x: 0.5, y: 0.5},
       text: this.config.name,
-      textStyle: {font: '30px Monospace', fill: '#000000'},
+      fontSize: 25
     })
 
     this.counter = new TextSprite(this.game, {
       x: 0, y: 12,
-      origin: {x: 0.5, y: 0.5},
       text: `${this.config.beginCount}/${this.config.endCount}`,
-      textStyle: {font: '50px Monospace', fill: '#000000'},
+      fontSize: 40
     })
 
     this.isEnable = true
