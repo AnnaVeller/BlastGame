@@ -8,8 +8,10 @@ export const GAME_SETTINGS = {
   availableColors: ['blue', 'green', 'purple', 'red', 'yellow'],
   colors: ['green', 'red', 'yellow', 'blue'],
   shuffles: 3, // кол-во перемешиваний
-  points: 55, // кол-во очков
+  points: 99, // кол-во очков
   moves: 5, // кол-во ходов
+  bombs: 3, // кол-во бомб
+  bombR: 3, // радиус сжигания тайлов от бомбы
 }
 
 export const GAME_LEVEL = [
@@ -31,9 +33,9 @@ if (IS_EXPORT_FIELD) {
 
 export const EVENTS = {
   blockTap: 'blockTap',
-  moveDone: 'moveDone', // ход сделан
-  deleteBlocks: 'deleteBlocks',
-  pressShuffle: 'pressShuffle'
+  endAction: 'endAction',
+  pressShuffle: 'pressShuffle',
+  pressBomb: 'pressBomb'
 }
 
 export const RESOURCES = [
@@ -86,6 +88,11 @@ export const RESOURCES = [
     key: 'bg',
     type: 'image',
     url: require('../assets/bg.jpg'),
+  },
+  {
+    key: 'btnStroke',
+    type: 'image',
+    url: require('../assets/button_stroke.png'),
   },
   {
     key: 'marvin',

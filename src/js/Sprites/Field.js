@@ -100,32 +100,47 @@ export default class Field extends Phaser.GameObjects.Container {
   }
 
   deleteCloseBlocks(mainBlock) {
-    if (!this.isEnable) return
+    if (!this.isEnable) return false
 
     const {minCells} = GAME_SETTINGS
 
-    const newBlocks = this.recursiveFind(mainBlock, [mainBlock])
+    const delArray = this.recursiveFind(mainBlock, [mainBlock])
 
     // не набрано минимальное кол-во одинаковых блоков рядом
-    if (newBlocks.length < minCells) {
-      return
+    if (delArray.length < minCells) {
+      return false
     }
-
-    this.game.events.emit(EVENTS.moveDone)
-    this.game.events.emit(EVENTS.deleteBlocks, newBlocks.length)
 
     this.disable()
 
-    newBlocks.forEach(block => block.deleteAnimation())
-    const [fallArray, maxExecutionTime] = this.drawFall(this.getFallSettings(newBlocks))
+    // TODO выделить какую-то структуру для этих анимаций
+    delArray.forEach(block => block.deleteAnimation())
+    const [fallArray, maxExecutionTime] = this.getFallArray(delArray)
 
     fallArray.forEach(el => el.block.blockFall(el.yCount, el.oneTime, el.delay))
-    this.game.time.delayedCall(maxExecutionTime - 150, this.afterFall, [fallArray, newBlocks], this)
-    this.game.time.delayedCall(maxExecutionTime - 150 + 350, this.enable, [], this)
+    this.game.time.delayedCall(maxExecutionTime - 150, this.afterFall, [fallArray, delArray], this)
+
+    // TODO сейчас они должны идти друг за другом, необходимо более явно это сообщать
+    this.game.time.delayedCall(maxExecutionTime - 150, this.fillEmptyCells, [], this)
+    this.game.time.delayedCall(maxExecutionTime - 150, this.spawnAnimation, [], this)
+
+    this.game.time.delayedCall(maxExecutionTime - 150 + 350, this.endAction, [delArray], this)
+
+    return true
+  }
+
+  endAction(newBlocks) {
+    this.enable()
+    this.game.events.emit(EVENTS.endAction, newBlocks.length)
+  }
+
+  spawnAnimation() {
+    this.spawnArray.forEach(block => block.spawnAnimation())
   }
 
   fillEmptyCells() {
     const {cols, rows, size, colors} = GAME_SETTINGS
+    this.spawnArray = []
 
     for (let i = rows - 1; i >= 0; i--) {
       for (let j = cols - 1; j >= 0; j--) {
@@ -136,6 +151,7 @@ export default class Field extends Phaser.GameObjects.Container {
           x: j * size,
           y: i * size,
           i: i, j: j,
+          isNew: true,
           visible: false,
           key: this.getRandomColor(colors)
         })
@@ -143,10 +159,10 @@ export default class Field extends Phaser.GameObjects.Container {
         this.add(block)
         this.allBlocks[i][j] = block
 
-        block.spawnAnimation()
+        this.spawnArray.push(block)
+        // block.spawnAnimation()
       }
     }
-
   }
 
   afterFall(fallArray, deletingArray) {
@@ -161,8 +177,6 @@ export default class Field extends Phaser.GameObjects.Container {
       el.block.i += el.yCount
       this.allBlocks[el.block.i][el.block.j] = el.block
     })
-
-    this.fillEmptyCells()
   }
 
   // расставляет элементы по колонкам
@@ -213,7 +227,9 @@ export default class Field extends Phaser.GameObjects.Container {
     return settings
   }
 
-  drawFall(settings) {
+  getFallArray(delArr) {
+    const settings = this.getFallSettings(delArr)
+
     // const settings = {
     //   14: [5],
     //   32: [3, 3, 3],
@@ -293,6 +309,58 @@ export default class Field extends Phaser.GameObjects.Container {
     const {rows, cols} = GAME_SETTINGS
 
     return i >= 0 && j >= 0 && i < rows && j < cols && this.allBlocks[i][j] && this.allBlocks[i][j].color === color
+  }
+
+  deleteRadius(block, r) {
+    if (!this.isEnable) return false
+
+    this.disable()
+
+    let delArray = [block]
+    const {i: iMain, j: jMain} = block
+
+    // рассматриваем радиусы от iR=1 и до iR=r
+    for (let iR = 1; iR < r; iR++) {
+      for (let j = 0; j <= iR; j++) {
+        const i = iR - j // число в сумме с j равное текущему радиусу
+        delArray = this.addElement(delArray, iMain - i, jMain - j)
+        delArray = this.addElement(delArray, iMain + i, jMain - j)
+        delArray = this.addElement(delArray, iMain - i, jMain + j)
+        delArray = this.addElement(delArray, iMain + i, jMain + j)
+      }
+    }
+
+    const [fallArray, maxExecutionTime] = this.getFallArray(delArray)
+
+    this.startDeleteAnimation(delArray)
+    this.game.time.delayedCall(300, this.startFallAnimation, [fallArray], this)
+    this.game.time.delayedCall(maxExecutionTime - 150 + 300, this.afterFall, [fallArray, delArray], this)
+    this.game.time.delayedCall(maxExecutionTime - 150 + 300, this.fillEmptyCells, [], this)
+    this.game.time.delayedCall(maxExecutionTime - 150 + 300, this.spawnAnimation, [], this)
+    this.game.time.delayedCall(maxExecutionTime - 150 + 350 + 300, this.endAction, [delArray], this)
+
+    return true
+  }
+
+  startDeleteAnimation(delArray) {
+    delArray.forEach(block => block.deleteAnimation())
+  }
+
+  startFallAnimation(fallArray) {
+    fallArray.forEach(el => el.block.blockFall(el.yCount, el.oneTime, el.delay))
+  }
+
+  addElement([...delArray], i, j) {
+    const block = this.getElement(i, j)
+    block && !delArray.includes(block) && delArray.push(block)
+
+    return delArray
+  }
+
+  getElement(i, j) {
+    const {rows, cols} = GAME_SETTINGS
+
+    return i >= 0 && j >= 0 && i < rows && j < cols && this.allBlocks[i][j]
   }
 
   getDefaultConfig(config) {

@@ -12,6 +12,7 @@ export default class Sprite extends Phaser.GameObjects.Sprite {
 
     this.changeInteractive(this.config.interactive)
     this.onPointerDown(this.config.OnPointerdown)
+    this.setVisible(this.config.visible)
   }
 
   onPointerDown(func) {
