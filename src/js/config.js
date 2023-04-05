@@ -1,21 +1,21 @@
 export const IS_EXPORT_FIELD = true
 
 export const GAME_SETTINGS = {
-  rows: 8,
-  cols: 8,
+  rows: 6,
+  cols: 6,
   size: 171,
   minCells: 2, // минимальное кол-во клеток для удаления
   availableColors: ['blue', 'green', 'purple', 'red', 'yellow'],
   colors: ['green', 'red', 'yellow', 'blue'],
-  countMix: 3, // кол-во перемешиваний
-  points: 110, // кол-во очков
-  moves: 10, // кол-во ходов
+  shuffles: 3, // кол-во перемешиваний
+  points: 55, // кол-во очков
+  moves: 5, // кол-во ходов
 }
 
 export const GAME_LEVEL = [
-  [0, 0, 'blue', 'blue', 'blue', 'blue', 0, 0],
-  [0, 0, 'blue', 'blue', 'blue', 'blue', 0, 0],
-  [0, 0, 'yellow', 'yellow', 'yellow', 'yellow', 0, 0],
+  ['yellow', 'yellow', 'blue', 'blue', 'blue', 'blue', 'yellow', 'yellow'],
+  ['yellow', 0, 'blue', 'blue', 'blue', 'blue', 0, 'yellow'],
+  ['yellow', 0, 'yellow', 'yellow', 'yellow', 'yellow', 0, 'yellow'],
   [0, 0, 'yellow', 'red', 'red', 'yellow', 0, 0],
   [0, 0, 'yellow', 'red', 'red', 'yellow', 0, 0],
   [0, 0, 'yellow', 'yellow', 'yellow', 'yellow', 0, 0],
@@ -76,6 +76,11 @@ export const RESOURCES = [
     key: 'button',
     type: 'image',
     url: require('../assets/button.png'),
+  },
+  {
+    key: 'panel',
+    type: 'image',
+    url: require('../assets/panel.png'),
   },
   {
     key: 'bg',

@@ -1,15 +1,18 @@
 import {EVENTS, GAME_LEVEL, GAME_SETTINGS, IS_EXPORT_FIELD} from "../config"
 import Block from "./Block"
 
-export default class Field {
-  constructor(game, config) {
-    this.game = game
-    this.config = this.getObject(config)
+export default class Field extends Phaser.GameObjects.Container {
+  constructor(config) {
+    super(config.scene, config.x, config.y)
+    config.scene.add.existing(this)
+
+    this.game = config.scene
+    this.config = this.getDefaultConfig(config)
+
     this.isEnable = true
 
     const {cols, rows} = GAME_SETTINGS
 
-    this.container = this.game.add.container(this.config.x, this.config.y)
     this.allBlocks = Array.from(Array(rows), () => new Array(cols))
 
     this.createBlocks()
@@ -57,9 +60,9 @@ export default class Field {
     for (let i = rows - 1; i >= 0; i--) {
       for (let j = cols - 1; j >= 0; j--) {
 
-        // this.allBlocks[i][j].content.setPosition(j * size, i * size)
+        // this.allBlocks[i][j].setPosition(j * size, i * size)
         this.allBlocks[i][j].moveTo(j * size, i * size, 500)
-        this.container.bringToTop(this.allBlocks[i][j].content)
+        this.bringToTop(this.allBlocks[i][j])
 
       }
     }
@@ -76,14 +79,15 @@ export default class Field {
 
     for (let i = rows - 1; i >= 0; i--) {
       for (let j = cols - 1; j >= 0; j--) {
-        const block = new Block(this.game, {
+        const block = new Block({
+          scene: this.game,
           x: j * size,
           y: i * size,
           i: i, j: j,
           key: IS_EXPORT_FIELD ? this.exportColor(i, j) : this.getRandomColor(colors)
         })
 
-        this.container.add(block.content)
+        this.add(block)
         this.allBlocks[i][j] = block
       }
     }
@@ -127,7 +131,8 @@ export default class Field {
       for (let j = cols - 1; j >= 0; j--) {
         if (this.allBlocks[i][j]) continue
 
-        const block = new Block(this.game, {
+        const block = new Block({
+          scene: this.game,
           x: j * size,
           y: i * size,
           i: i, j: j,
@@ -135,7 +140,7 @@ export default class Field {
           key: this.getRandomColor(colors)
         })
 
-        this.container.add(block.content)
+        this.add(block)
         this.allBlocks[i][j] = block
 
         block.spawnAnimation()
@@ -290,9 +295,45 @@ export default class Field {
     return i >= 0 && j >= 0 && i < rows && j < cols && this.allBlocks[i][j] && this.allBlocks[i][j].color === color
   }
 
-  getObject(config) {
+  getDefaultConfig(config) {
     return Object.assign({x: 0, y: 0}, config)
   }
+
+  resizeField({height, width, scaleFactor, isLandscape, midX, midY, aspectRatio}) {
+    const {cols, rows, size} = GAME_SETTINGS
+
+    const fieldWidth = rows * size
+    const fieldHeight = cols * size
+
+    let scale, x, y
+
+    if (isLandscape) {
+      scale = height / fieldHeight * 0.9 / scaleFactor
+
+      // вытянутое по горизонали поле
+      if (fieldWidth > fieldHeight && width < fieldWidth * scale) {
+        scale = width / fieldWidth * 0.9
+      }
+
+      x = midX * 2 - (fieldWidth - size / 2 + 50) * scale - (aspectRatio - 1) * 200
+      y = midY + (size / 2 - fieldHeight / 2) * scale
+
+    } else {
+      scale = width / fieldWidth * 0.9 / scaleFactor
+
+      // вытянутое по горизонали поле
+      if (fieldHeight > fieldWidth && height < fieldHeight * scale) {
+        scale = height / fieldHeight * 0.9 / scaleFactor
+      }
+
+      x = midX - (fieldWidth / 2 - size / 2) * scale
+      y = midY * 2 + (size / 2 - fieldHeight - 50) * scale - (1 - aspectRatio) * 300
+    }
+
+    this.scale = scale
+    this.setPosition(x, y)
+  }
+
 
 }
 

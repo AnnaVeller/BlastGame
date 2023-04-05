@@ -1,8 +1,8 @@
 import Sprite from "./Sprite"
 
 export default class Button extends Sprite {
-  constructor(game, config) {
-    super(game, config)
+  constructor(config) {
+    super(config)
 
     this.changeInteractive(this.config.interactive)
 
@@ -10,7 +10,7 @@ export default class Button extends Sprite {
   }
 
   onPointerDown(func) {
-    this.content.on('pointerdown', () => {
+    this.on('pointerdown', () => {
       func && func()
     })
   }
@@ -24,25 +24,16 @@ export default class Button extends Sprite {
   }
 
   enableInteractive() {
-    this.content.setInteractive()
-    this.content.clearTint()
+    this.setInteractive()
+    this.clearTint()
   }
 
   disableInteractive() {
-    this.content.removeInteractive()
-    this.content.tint = 0x808080
+    this.removeInteractive()
+    this.tint = 0x808080
   }
 
-  getObject(config) {
-    return Object.assign({
-      alpha: 1,
-      x: 0, y: 0,
-      scale: {x: 1, y: 1},
-      origin: {x: 0.5, y: 0.5},
-      interactive: false,
-      name: '',
-      onPointerDown: '',
-      visible: true
-    }, config)
+  getDefaultConfig(config) {
+    return Object.assign(super.getDefaultConfig(config), {})
   }
 }

@@ -1,16 +1,16 @@
-import Sprite from "../Engine/Sprite"
 import {EVENTS, GAME_SETTINGS} from "../config"
+import Sprite from "../Engine/Sprite"
 
 export default class Block extends Sprite {
-  constructor(game, config = {}) {
-    super(game, config)
+  constructor(config) {
+    super(config)
 
     this.color = this.config.key
     this.i = this.config.i
     this.j = this.config.j
 
-    this.content.setInteractive()
-    this.content.on('pointerdown', this.onTap, this)
+    this.setInteractive()
+    this.on('pointerdown', this.onTap, this)
 
     this.isEnable = true // на клетку можно тапнуть
   }
@@ -30,7 +30,7 @@ export default class Block extends Sprite {
     this.disable()
 
     this.game.tweens.add({
-      targets: this.content,
+      targets: this,
       scaleX: 0,
       scaleY: 0,
       duration: 200,
@@ -41,7 +41,7 @@ export default class Block extends Sprite {
     this.disable()
 
     this.game.tweens.add({
-      targets: this.content,
+      targets: this,
       x, y,
       duration: time,
       onComplete: () => this.enable()
@@ -51,11 +51,11 @@ export default class Block extends Sprite {
   spawnAnimation() {
     this.disable()
 
-    this.content.visible = true
-    this.content.setScale(0)
+    this.visible = true
+    this.setScale(0)
 
     this.game.tweens.add({
-      targets: this.content,
+      targets: this,
       scaleX: 1,
       scaleY: 1,
       ease: 'Sine.easeOut',
@@ -66,7 +66,7 @@ export default class Block extends Sprite {
 
   pressBtnAnimation() {
     this.game.tweens.add({
-      targets: this.content,
+      targets: this,
       scaleX: {from: 1, to: 0.9},
       scaleY: {from: 1, to: 0.9},
       duration: 100,
@@ -79,7 +79,7 @@ export default class Block extends Sprite {
     this.disable()
 
     this.game.tweens.add({
-      targets: this.content,
+      targets: this,
       y: (this.i + yCount) * GAME_SETTINGS.size,
       delay,
       duration: yCount * oneTime,

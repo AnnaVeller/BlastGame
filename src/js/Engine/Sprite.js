@@ -1,41 +1,53 @@
-export default class Sprite {
-  constructor(game, config = {}) {
-    this.game = game
-    this.config = this.getObject(config)
+export default class Sprite extends Phaser.GameObjects.Sprite {
+  constructor(config) {
+    super(config.scene, config.x, config.y, config.key)
+    config.scene.add.existing(this)
 
-    this.content = game.add.sprite(this.config.x, this.config.y, this.config.key)
-    this.content.alpha = this.config.alpha
-    this.content.setOrigin(this.config.origin.x, this.config.origin.y)
-    this.content.setScale(this.config.scale.x, this.config.scale.y)
-    this.content.visible = this.config.visible
-    this.name = this.config.name
+    this.game = config.scene
+    this.config = Object.assign(this.getDefaultConfig(config), config)
 
-    this.content.parentClass = this
+    this.alpha = this.config.alpha
+    this.setScale(this.config.scale.x, this.config.scale.y)
+    this.setOrigin(this.config.origin.x, this.config.origin.y)
 
-    if (this.config.tint) {
-      this.content.tint = this.config.tint
-    }
-    if (this.config.interactive) {
-      this.content.setInteractive()
+    this.changeInteractive(this.config.interactive)
+    this.onPointerDown(this.config.OnPointerdown)
+  }
+
+  onPointerDown(func) {
+    this.on('pointerdown', () => func && func())
+  }
+
+  changeInteractive(mode) {
+    if (mode) {
+      this.enableInteractive()
+    } else {
+      this.disableInteractive()
     }
   }
 
-  // изменяет скейл сохраняя знаки
-  changeScale(valueX, valueY = valueX) {
-    this.content.setScale(Math.sign(this.content.scaleX) * valueX, Math.sign(this.content.scaleY) * valueY)
+  enableInteractive() {
+    this.setInteractive()
+    this.clearTint()
   }
 
-  getObject(config) {
-    return Object.assign({
+  disableInteractive() {
+    this.removeInteractive()
+    // this.tint = 0x808080
+  }
+
+  getDefaultConfig(config) {
+    return {
       alpha: 1,
-      x: 0, y: 0,
-      scale: {x: 1, y: 1},
       origin: {x: 0.5, y: 0.5},
+      scale: {x: 1, y: 1},
+      visible: true,
       interactive: false,
-      name: '',
-      visible: true
-    }, config)
+      tint: 0xffffff,
+    }
   }
+
+
 }
 
 

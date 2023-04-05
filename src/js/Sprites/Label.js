@@ -1,18 +1,23 @@
-import TextSprite from "../Engine/TextSprite"
 import Sprite from "../Engine/Sprite"
+import BitmapText from "../Engine/BitmapText"
 
-export default class Label {
-  constructor(game, config = {}) {
-    this.game = game
-    this.config = this.getObject(config)
+export default class Label extends Phaser.GameObjects.Container {
+  constructor(config) {
+    super(config.scene, config.x, config.y)
+    config.scene.add.existing(this)
 
-    const label = new Sprite(this.game, {
+    this.game = config.scene
+    this.config = this.getDefaultConfig(config)
+
+    const label = new Sprite({
+      scene: this.game,
       x: 0, y: 0,
       key: 'label',
       scale: {x: 0.6, y: 0.6}
     })
 
-    const name = new TextSprite(this.game, {
+    const name = new BitmapText({
+      scene: this.game,
       x: 0, y: -28,
       alpha: 0.8,
       origin: {x: 0.5, y: 0.5},
@@ -20,22 +25,22 @@ export default class Label {
       fontSize: 30,
     })
 
-    this.counter = new TextSprite(this.game, {
+    this.counter = new BitmapText({
+      scene: this.game,
       x: 0, y: 12,
       origin: {x: 0.5, y: 0.5},
       text: `${this.config.beginCount}/${this.config.endCount}`,
       fontSize: 40
     })
 
-    this.container = this.game.add.container(this.config.x, this.config.y)
-    this.container.add([label.content, name.content, this.counter.content])
+    this.add([label, name, this.counter])
   }
 
   setText(num) {
-    this.counter.content.text = `${num}/${this.config.endCount}`
+    this.counter.text = `${num}/${this.config.endCount}`
   }
 
-  getObject(config) {
+  getDefaultConfig(config) {
     return Object.assign({
       x: 0, y: 0,
       name: 'Очки',

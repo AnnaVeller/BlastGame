@@ -1,5 +1,5 @@
 import Phaser from "phaser"
-import {getWorldView, resize} from "../Engine/resizer"
+import {resize} from "../Engine/resizer"
 import Field from "../Sprites/Field"
 import Label from "../Sprites/Label"
 import MixButton from "../Sprites/MixButton"
@@ -16,20 +16,20 @@ export default class GameScene extends Phaser.Scene {
     this.containers = {}
 
     this.moves = GAME_SETTINGS.moves
-    this.mixes = GAME_SETTINGS.countMix
+    this.shuffles = GAME_SETTINGS.shuffles
     this.points = 0
 
     this.isEnable = true
   }
 
   create() {
-    new Sprite(this, {key: 'bg', origin: {x: 0, y: 0}})
+    new Sprite({scene: this, key: 'bg', origin: {x: 0, y: 0}})
 
-    this.field = new Field(this, {x: 150, y: 150})
+    this.field = new Field({scene: this, x: 150, y: 150})
 
-    this.labelPoints = new Label(this, {name: 'Очки', endCount: GAME_SETTINGS.points})
-    this.labelMoves = new Label(this, {name: 'Ходы', beginCount: this.moves, endCount: this.moves})
-    this.labelMix = new MixButton(this, {beginCount: this.mixes, endCount: this.mixes})
+    this.labelPoints = new Label({scene: this, name: 'Очки', endCount: GAME_SETTINGS.points})
+    this.labelMoves = new Label({scene: this, name: 'Ходы', beginCount: this.moves, endCount: this.moves})
+    this.buttonMix = new MixButton({scene: this, beginCount: this.shuffles, endCount: this.shuffles})
 
     this.events.on(EVENTS.blockTap, (block) => {
       if (!this.isEnable) return
@@ -42,20 +42,23 @@ export default class GameScene extends Phaser.Scene {
 
       this.labelMoves.setText(--this.moves)
       this.moves === 0 && this.disable()
-      this.moves === 0 && this.labelMix.disableInteractive()
+      this.moves === 0 && this.buttonMix.disableInteractive()
+
+      this.moves === 0 && this.time.delayedCall(1000, this.endGame, [], this)
     })
 
     this.events.on(EVENTS.deleteBlocks, (count) => {
       this.points += count
       this.labelPoints.setText(this.points)
+
+      this.points >= GAME_SETTINGS.points && this.winGame()
     })
 
     this.events.on(EVENTS.pressShuffle, () => {
       if (!this.isEnable || !this.field.isEnable) return
 
       this.field.shuffle()
-      this.labelMix.setText(--this.mixes)
-      this.mixes === 0 && this.labelMix.disableInteractive()
+      this.buttonMix.setText(--this.shuffles)
     })
 
     this.scale.on('resize', this.resize, this)
@@ -73,74 +76,41 @@ export default class GameScene extends Phaser.Scene {
   update(time, delta) {
   }
 
+  endGame() {
+    this.points >= GAME_SETTINGS.points && this.winGame()
+    this.points < GAME_SETTINGS.points && this.failGame()
+  }
+
+  winGame() {
+    this.disable()
+    this.scene.launch('Win')
+  }
+
+  failGame() {
+    this.disable()
+    this.scene.launch('Fail')
+  }
+
   resize() {
     // стоп ресайза, если ушли с этой сцены
     if (!this.scene.settings.active) return
 
-    const {
-      height,
-      width,
-      scaleFactor,
-      isLandscape,
-      midX,
-      midY,
-      aspectRatio
-    } = resize(this)
+    const resizeData = resize(this)
 
-    // левый вверх экрана
-    const worldView = getWorldView(this.cameras.main)
+    const {isLandscape, scaleFactor, worldView} = resizeData
 
     if (isLandscape) {
-      this.labelPoints.container.setPosition(50 + 180 * scaleFactor, worldView.y + 200)
-      this.labelMoves.container.setPosition(50 + 180 * scaleFactor, worldView.y + 300)
-      this.labelMix.container.setPosition(50 + 180 * scaleFactor, worldView.y + 400)
+      this.labelPoints.setPosition(50 + 180 * scaleFactor, worldView.y + 200)
+      this.labelMoves.setPosition(50 + 180 * scaleFactor, worldView.y + 300)
+      this.buttonMix.setPosition(50 + 180 * scaleFactor, worldView.y + 400)
     } else {
       const y0 = 50
       const dy = 120
-      this.labelPoints.container.setPosition(worldView.x + 170, 60 + y0 * scaleFactor)
-      this.labelMoves.container.setPosition(worldView.x + 170, 60 + (y0 + dy) * scaleFactor)
-      this.labelMix.container.setPosition(worldView.x + 170, 60 + (y0 + 2 * dy) * scaleFactor)
+      this.labelPoints.setPosition(worldView.x + 170, 60 + y0 * scaleFactor)
+      this.labelMoves.setPosition(worldView.x + 170, 60 + (y0 + dy) * scaleFactor)
+      this.buttonMix.setPosition(worldView.x + 170, 60 + (y0 + 2 * dy) * scaleFactor)
     }
 
-    this.resizeField({height, width, scaleFactor, isLandscape, midX, midY, aspectRatio})
+    this.field.resizeField(resizeData)
   }
-
-  resizeField({height, width, scaleFactor, isLandscape, midX, midY, aspectRatio}) {
-    if (!this.field) return
-
-    const {cols, rows, size} = GAME_SETTINGS
-
-    const fieldWidth = rows * size
-    const fieldHeight = cols * size
-
-    let scale, x, y
-
-    if (isLandscape) {
-      scale = height / fieldHeight * 0.9 / scaleFactor
-
-      // вытянутое по горизонали поле
-      if (fieldWidth > fieldHeight && width < fieldWidth * scale) {
-        scale = width / fieldWidth * 0.9
-      }
-
-      x = midX * 2 - (fieldWidth - size / 2 + 50) * scale - (aspectRatio - 1) * 200
-      y = midY + (size / 2 - fieldHeight / 2) * scale
-
-    } else {
-      scale = width / fieldWidth * 0.9 / scaleFactor
-
-      // вытянутое по горизонали поле
-      if (fieldHeight > fieldWidth && height < fieldHeight * scale) {
-        scale = height / fieldHeight * 0.9 / scaleFactor
-      }
-
-      x = midX - (fieldWidth / 2 - size / 2) * scale
-      y = midY * 2 + (size / 2 - fieldHeight - 50) * scale - (1 - aspectRatio) * 300
-    }
-
-    this.field.container.scale = scale
-    this.field.container.setPosition(x, y)
-
-  }
-
 }

@@ -15,10 +15,12 @@ export function resize(state) {
   const midX = state.cameras.main.midPoint.x
   const midY = state.cameras.main.midPoint.y
 
-  return {height, width, scaleFactor, isLandscape, midX, midY, aspectRatio}
+  const worldView = getWorldView(state.cameras.main)
+
+  return {height, width, scaleFactor, isLandscape, midX, midY, aspectRatio, worldView}
 }
 
-export function getWorldView(camera) {
+function getWorldView(camera) {
   // this.cameras.main.worldView - в начале работает некорректно
 
   return {

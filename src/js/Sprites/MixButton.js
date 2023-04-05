@@ -1,13 +1,18 @@
-import TextSprite from "../Engine/TextSprite"
-import Button from "../Engine/Button"
+import BitmapText from "../Engine/BitmapText"
+import Sprite from "../Engine/Sprite"
 import {EVENTS} from "../config"
 
-export default class MixButton {
-  constructor(game, config = {}) {
-    this.game = game
-    this.config = this.getObject(config)
+export default class MixButton extends Phaser.GameObjects.Container {
+  constructor(config) {
+    super(config.scene, config.x, config.y)
+    config.scene.add.existing(this)
 
-    this.button = new Button(this.game, {
+    this.game = config.scene
+    this.config = this.getDefaultConfig(config)
+
+
+    this.button = new Sprite({
+      scene: this.game,
       x: 0, y: 0,
       key: 'button',
       scale: {x: 0.6, y: 0.6},
@@ -15,23 +20,24 @@ export default class MixButton {
       OnPointerdown: () => this.pressBtn()
     })
 
-    const name = new TextSprite(this.game, {
+    const name = new BitmapText({
+      scene: this.game,
       x: 0, y: -28,
       alpha: 0.8,
       text: this.config.name,
       fontSize: 25
     })
 
-    this.counter = new TextSprite(this.game, {
+    this.counter = new BitmapText({
+      scene: this.game,
       x: 0, y: 12,
       text: `${this.config.beginCount}/${this.config.endCount}`,
       fontSize: 40
     })
 
-    this.isEnable = true
+    this.add([this.button, name, this.counter])
 
-    this.container = this.game.add.container(this.config.x, this.config.y)
-    this.container.add([this.button.content, name.content, this.counter.content])
+    this.isEnable = true
   }
 
   pressBtn() {
@@ -40,7 +46,7 @@ export default class MixButton {
     this.game.events.emit(EVENTS.pressShuffle)
 
     this.game.tweens.add({
-      targets: this.container,
+      targets: this,
       scaleX: {from: 1, to: 0.9},
       scaleY: {from: 1, to: 0.9},
       duration: 100,
@@ -66,21 +72,22 @@ export default class MixButton {
 
   enableInteractive() {
     this.enable()
-    this.button.content.setInteractive()
-    this.button.content.clearTint()
+    this.button.setInteractive()
+    this.button.clearTint()
   }
 
   disableInteractive() {
     this.disable()
-    this.button.content.removeInteractive()
-    this.button.content.tint = 0x808080
+    this.button.removeInteractive()
+    this.button.tint = 0x808080
   }
 
   setText(num) {
-    this.counter.content.text = `${num}/${this.config.endCount}`
+    this.counter.text = `${num}/${this.config.endCount}`
+    num === 0 && this.disableInteractive()
   }
 
-  getObject(config) {
+  getDefaultConfig(config) {
     return Object.assign({
       x: 0, y: 0,
       name: 'Перемешать',
