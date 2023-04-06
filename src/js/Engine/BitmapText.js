@@ -10,6 +10,7 @@ export default class BitmapText extends Phaser.GameObjects.BitmapText {
     this.alpha = this.config.alpha
     this.setScale(this.config.scale.x, this.config.scale.y)
     this.setOrigin(this.config.origin.x, this.config.origin.y)
+    this.setTint(this.config.tint)
   }
 
   getDefaultConfig(config) {

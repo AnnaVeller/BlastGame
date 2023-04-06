@@ -1,6 +1,8 @@
 import {EVENTS, GAME_LEVEL, GAME_SETTINGS, IS_EXPORT_FIELD} from "../config"
 import Block from "./Block"
+import BlockStroke from "./BlockStroke"
 
+// TODO разделить!
 export default class Field extends Phaser.GameObjects.Container {
   constructor(config) {
     super(config.scene, config.x, config.y)
@@ -60,14 +62,22 @@ export default class Field extends Phaser.GameObjects.Container {
     for (let i = rows - 1; i >= 0; i--) {
       for (let j = cols - 1; j >= 0; j--) {
 
-        // this.allBlocks[i][j].setPosition(j * size, i * size)
         this.allBlocks[i][j].moveTo(j * size, i * size, 500)
         this.bringToTop(this.allBlocks[i][j])
-
       }
     }
 
     this.game.time.delayedCall(500, this.enable, [], this)
+  }
+
+  bringToTopAll() {
+    const {cols, rows} = GAME_SETTINGS
+
+    for (let i = rows - 1; i >= 0; i--) {
+      for (let j = cols - 1; j >= 0; j--) {
+        this.bringToTop(this.allBlocks[i][j])
+      }
+    }
   }
 
   exportColor(i, j) {
@@ -91,6 +101,49 @@ export default class Field extends Phaser.GameObjects.Container {
         this.allBlocks[i][j] = block
       }
     }
+  }
+
+  createStroke(block) {
+    const stroke = new BlockStroke({scene: this.game, x: block.x, y: block.y})
+    this.add(stroke)
+  }
+
+  deleteStrokes() {
+    this.list.filter(el => el instanceof BlockStroke).forEach(el => el.destroy())
+  }
+
+  deleteStroke(block) {
+    this.list.filter(el => el instanceof BlockStroke)
+      .find(stroke => stroke.x === block.x && stroke.y === block.y).destroy()
+  }
+
+  // TODO переписать код телепорта
+  teleportBlocks(block1, block2) {
+    if (!this.isEnable) return
+
+    this.disable()
+
+    const {size} = GAME_SETTINGS
+
+    const tmpI = block2.i
+    const tmpJ = block2.j
+
+    block2.i = block1.i
+    block2.j = block1.j
+
+    block1.i = tmpI
+    block1.j = tmpJ
+
+    block1.moveTo(block1.j * size, block1.i * size, 300)
+    block2.moveTo(block2.j * size, block2.i * size, 300)
+    this.bringToTop(block1)
+    this.bringToTop(block2)
+
+    this.allBlocks[block1.i][block1.j] = block1
+    this.allBlocks[block2.i][block2.j] = block2
+
+    this.game.time.delayedCall(300, this.bringToTopAll, [], this)
+    this.game.time.delayedCall(300, this.enable, [], this)
   }
 
   getRandomColor(colors) {

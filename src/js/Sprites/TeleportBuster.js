@@ -1,16 +1,16 @@
 import {EVENTS, GAME_SETTINGS} from "../config"
 import Buster from "./Buster"
 
-export default class BombBuster extends Buster {
+export default class TeleportBuster extends Buster {
   constructor(config) {
     super(config)
   }
 
   getDefaultConfig(config) {
     return Object.assign(super.getDefaultConfig(config), {
-      name: 'Бомбы',
-      maxValue: GAME_SETTINGS.bombs,
-      action: EVENTS.pressBomb
+      name: 'Телепорты',
+      maxValue: GAME_SETTINGS.teleports,
+      action: EVENTS.pressTeleport,
     }, config)
   }
 

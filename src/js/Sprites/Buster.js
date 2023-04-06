@@ -1,8 +1,7 @@
 import BitmapText from "../Engine/BitmapText"
 import Sprite from "../Engine/Sprite"
-import {EVENTS} from "../config"
 
-export default class MixButton extends Phaser.GameObjects.Container {
+export default class Buster extends Phaser.GameObjects.Container {
   constructor(config) {
     super(config.scene, config.x, config.y)
     config.scene.add.existing(this)
@@ -10,7 +9,19 @@ export default class MixButton extends Phaser.GameObjects.Container {
     this.game = config.scene
     this.config = this.getDefaultConfig(config)
 
+    this.setScale(this.config.scale.x, this.config.scale.y)
+    this.setVisible(this.config.visible)
+    this.setPosition(this.config.x, this.config.y)
+    this.alpha = this.config.alpha
+    this.pressEvent = this.config.action
 
+    this.isEnable = true
+    this.isPress = false
+
+    this.createBusterBtn()
+  }
+
+  createBusterBtn() {
     this.button = new Sprite({
       scene: this.game,
       x: 0, y: 0,
@@ -18,6 +29,14 @@ export default class MixButton extends Phaser.GameObjects.Container {
       scale: {x: 0.6, y: 0.6},
       interactive: true,
       OnPointerdown: () => this.pressBtn()
+    })
+
+    this.stroke = new Sprite({
+      scene: this.game,
+      x: 0, y: 0,
+      key: 'btnStroke',
+      scale: {x: 0.6, y: 0.6},
+      visible: false,
     })
 
     const name = new BitmapText({
@@ -31,26 +50,39 @@ export default class MixButton extends Phaser.GameObjects.Container {
     this.counter = new BitmapText({
       scene: this.game,
       x: 0, y: 12,
-      text: `${this.config.beginCount}/${this.config.endCount}`,
+      text: `${this.config.maxValue}/${this.config.maxValue}`,
       fontSize: 40
     })
 
-    this.add([this.button, name, this.counter])
-
-    this.isEnable = true
+    this.add([this.button, name, this.counter, this.stroke])
   }
 
   pressBtn() {
     if (!this.isEnable) return
+    this.game.events.emit(this.pressEvent)
+  }
 
-    this.game.events.emit(EVENTS.pressShuffle)
+  hideChoose() {
+    this.isPress = false
+    this.stroke.setVisible(false)
+
+    this.game.tweens.add({
+      targets: this,
+      scaleX: 1,
+      scaleY: 1,
+      duration: 100,
+    })
+  }
+
+  showChoose() {
+    this.isPress = true
+    this.stroke.setVisible(true)
 
     this.game.tweens.add({
       targets: this,
       scaleX: {from: 1, to: 0.9},
       scaleY: {from: 1, to: 0.9},
       duration: 100,
-      yoyo: true,
     })
   }
 
@@ -83,7 +115,7 @@ export default class MixButton extends Phaser.GameObjects.Container {
   }
 
   setText(num) {
-    this.counter.text = `${num}/${this.config.endCount}`
+    this.counter.text = `${num}/${this.config.maxValue}`
     num === 0 && this.disableInteractive()
   }
 
@@ -91,15 +123,12 @@ export default class MixButton extends Phaser.GameObjects.Container {
     return Object.assign({
       x: 0, y: 0,
       name: '',
-      beginCount: 4,
-      endCount: 4,
       alpha: 1,
       scale: {x: 1, y: 1},
-      origin: {x: 0.5, y: 0.5},
-      onPointerDown: ''
+      visible: true,
+      maxValue: 0,
+      action: ''
     }, config)
   }
 
 }
-
-

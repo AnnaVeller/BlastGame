@@ -7,11 +7,12 @@ export const GAME_SETTINGS = {
   minCells: 2, // минимальное кол-во клеток для удаления
   availableColors: ['blue', 'green', 'purple', 'red', 'yellow'],
   colors: ['green', 'red', 'yellow', 'blue'],
-  shuffles: 3, // кол-во перемешиваний
+  shuffles: 30, // кол-во перемешиваний
   points: 99, // кол-во очков
   moves: 5, // кол-во ходов
   bombs: 3, // кол-во бомб
   bombR: 3, // радиус сжигания тайлов от бомбы
+  teleports: 7,
 }
 
 export const GAME_LEVEL = [
@@ -35,7 +36,8 @@ export const EVENTS = {
   blockTap: 'blockTap',
   endAction: 'endAction',
   pressShuffle: 'pressShuffle',
-  pressBomb: 'pressBomb'
+  pressBomb: 'pressBomb',
+  pressTeleport: 'pressTeleport'
 }
 
 export const RESOURCES = [
@@ -93,6 +95,11 @@ export const RESOURCES = [
     key: 'btnStroke',
     type: 'image',
     url: require('../assets/button_stroke.png'),
+  },
+  {
+    key: 'stroke',
+    type: 'image',
+    url: require('../assets/stroke_red.png'),
   },
   {
     key: 'marvin',

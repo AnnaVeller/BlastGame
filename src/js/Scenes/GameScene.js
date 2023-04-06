@@ -2,15 +2,17 @@ import Phaser from "phaser"
 import {resize} from "../Engine/resizer"
 import Field from "../Sprites/Field"
 import Label from "../Sprites/Label"
-import MixButton from "../Sprites/MixButton"
 import Sprite from "../Engine/Sprite"
-import {EVENTS, GAME_SETTINGS} from "../config"
 import BombBuster from "../Sprites/BombBuster"
-
+import TeleportBuster from "../Sprites/TeleportBuster"
+import MixBuster from "../Sprites/MixBuster"
+import {EVENTS, GAME_SETTINGS} from "../config"
 
 const STATE = {
   game: 'game',
-  bomb: 'bomb'
+  mix: 'mix',
+  bomb: 'bomb',
+  teleport: 'teleport',
 }
 
 export default class GameScene extends Phaser.Scene {
@@ -26,10 +28,13 @@ export default class GameScene extends Phaser.Scene {
     this.shuffles = GAME_SETTINGS.shuffles
     this.points = 0
     this.bombs = GAME_SETTINGS.bombs
+    this.teleports = GAME_SETTINGS.teleports
 
     this.isEnable = true
 
     this.state = STATE.game
+
+    this.blocksTap = []
   }
 
   create() {
@@ -39,25 +44,22 @@ export default class GameScene extends Phaser.Scene {
 
     this.labelPoints = new Label({scene: this, name: 'Очки', endCount: GAME_SETTINGS.points})
     this.labelMoves = new Label({scene: this, name: 'Ходы', beginCount: this.moves, endCount: this.moves})
-    this.buttonMix = new MixButton({
-      scene: this,
-      name: 'Перемешать',
-      beginCount: this.shuffles,
-      endCount: this.shuffles
-    })
-    this.buttonBomb = new BombBuster({scene: this, name: 'Бомбы', beginCount: this.bombs, endCount: this.bombs})
+    this.buttonMix = new MixBuster({scene: this})
+    this.buttonBomb = new BombBuster({scene: this})
+    this.buttonTeleport = new TeleportBuster({scene: this})
 
+    // тап на блок
     this.events.on(EVENTS.blockTap, (block) => {
       if (!this.isEnable) return
 
+      // TODO отделить код состояний
       if (this.state === STATE.bomb) {
         const flag = this.field.deleteRadius(block, GAME_SETTINGS.bombR)
 
         if (!flag) return
 
         this.buttonBomb.setText(--this.bombs)
-        this.buttonBomb.hideChoose()
-        this.state = STATE.game
+        this.setGameState()
 
       } else if (this.state === STATE.game) {
         const flag = this.field.deleteCloseBlocks(block)
@@ -68,6 +70,27 @@ export default class GameScene extends Phaser.Scene {
         this.moves === 0 && this.disable()
         this.moves === 0 && this.buttonMix.disableInteractive()
         this.moves === 0 && this.buttonBomb.disableInteractive()
+      } else if (this.state === STATE.teleport) {
+
+        if (this.blocksTap.includes(block)) {
+          // убираем блок из выбранных
+          this.field.deleteStroke(block)
+          this.blocksTap.splice(this.blocksTap.indexOf(block), 1)
+
+        } else {
+          this.blocksTap.push(block)
+          this.field.createStroke(block)
+
+          if (this.blocksTap.length === 2) {
+            this.field.deleteStrokes()
+
+            this.field.teleportBlocks(this.blocksTap[0], this.blocksTap[1])
+            this.buttonTeleport.setText(--this.teleports)
+            this.setGameState()
+            this.blocksTap = []
+          }
+        }
+
       }
     })
 
@@ -82,16 +105,60 @@ export default class GameScene extends Phaser.Scene {
     this.events.on(EVENTS.pressShuffle, () => {
       if (!this.isEnable || !this.field.isEnable) return
 
+      this.disable()
+      this.setMixState()
       this.field.shuffle()
       this.buttonMix.setText(--this.shuffles)
+      this.time.delayedCall(500, this.setGameState, [], this)
+      this.time.delayedCall(500, this.enable, [], this)
     })
 
-    this.events.on(EVENTS.pressBomb, () => {
-      this.state = this.state === STATE.bomb ? STATE.game : STATE.bomb
-    })
+    this.events.on(EVENTS.pressBomb, () =>
+      this.state === STATE.bomb ? this.setGameState() : this.setBombState())
+
+    this.events.on(EVENTS.pressTeleport, () =>
+      this.state === STATE.teleport ? this.setGameState() : this.setTeleportState())
 
     this.scale.on('resize', this.resize, this)
     this.resize(this.scale.gameSize)
+  }
+
+  deleteTeleportSettings() {
+    this.field.deleteStrokes()
+    this.blocksTap = []
+  }
+
+  setMixState() {
+    this.state = STATE.mix
+    this.buttonMix.showChoose()
+    this.buttonBomb.hideChoose()
+    this.buttonTeleport.hideChoose()
+    this.deleteTeleportSettings()
+  }
+
+  setTeleportState() {
+    if (this.state === STATE.mix) return
+
+    this.state = STATE.teleport
+    this.buttonTeleport.showChoose()
+    this.buttonBomb.hideChoose()
+  }
+
+  setBombState() {
+    if (this.state === STATE.mix) return
+
+    this.state = STATE.bomb
+    this.buttonTeleport.hideChoose()
+    this.buttonBomb.showChoose()
+    this.deleteTeleportSettings()
+  }
+
+  setGameState() {
+    this.state = STATE.game
+    this.buttonMix.hideChoose()
+    this.buttonTeleport.hideChoose()
+    this.buttonBomb.hideChoose()
+    this.deleteTeleportSettings()
   }
 
   disable() {
@@ -130,13 +197,13 @@ export default class GameScene extends Phaser.Scene {
       this.labelMoves.setPosition(50 + 180 * scaleFactor, worldView.y + 300)
       this.buttonMix.setPosition(50 + 180 * scaleFactor, worldView.y + 400)
       this.buttonBomb.setPosition(50 + 180 * scaleFactor, worldView.y + 500)
+      this.buttonTeleport.setPosition(50 + 180 * scaleFactor, worldView.y + 600)
     } else {
-      const y0 = 50
-      const dy = 120
-      this.labelPoints.setPosition(worldView.x + 170, 60 + y0 * scaleFactor)
-      this.labelMoves.setPosition(worldView.x + 170, 60 + (y0 + dy) * scaleFactor)
-      this.buttonMix.setPosition(worldView.x + 170, 60 + (y0 + 2 * dy) * scaleFactor)
-      this.buttonBomb.setPosition(worldView.x + 170, 60 + (y0 + 3 * dy) * scaleFactor)
+      this.labelPoints.setPosition(worldView.x + 150, worldView.y + 50)
+      this.labelMoves.setPosition(worldView.x + 150, worldView.y + 150)
+      this.buttonMix.setPosition(worldView.x + 150, worldView.y + 250)
+      this.buttonBomb.setPosition(worldView.x + 150, worldView.y + 350)
+      this.buttonTeleport.setPosition(worldView.x + 150, worldView.y + 450)
     }
 
     this.field.resizeField(resizeData)
