@@ -8,6 +8,7 @@ import FallSettings from "./FallSettings"
 import ResizerField from "./ResizerField"
 import Teleport from "./Teleport"
 import Animations from "./Animations"
+import Explosion from "./Explosion"
 
 export default class Field extends Container {
   constructor(config) {
@@ -77,6 +78,8 @@ export default class Field extends Container {
     this.disable()
 
     const delArray = Finder.getBlocksAround(block, r, this.allBlocks)
+
+    delArray.forEach(el => this.add(new Explosion({scene: this.game, x: el.x, y: el.y})))
 
     this.startDeleteFallScenario(delArray, TIME.bombFallDelay)
 

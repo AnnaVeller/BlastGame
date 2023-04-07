@@ -30,7 +30,7 @@ export default class ResizerField {
       }
 
       x = midX - (fieldWidth / 2 - size / 2) * scale
-      y = midY * 2 + (size / 2 - fieldHeight - 50) * scale - (1 - aspectRatio) * 300
+      y = midY * 2 + (size / 2 - fieldHeight - 100) * scale - (1 - aspectRatio) * 300
     }
 
     return {scale, x, y}

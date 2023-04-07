@@ -20,13 +20,13 @@ export const GAME_SETTINGS = {
 export const TIME = {
   shuffle: 500,
   teleport: 300,
+  explosion: 300,
   bombFallDelay: 300, // задержка опадения фишек после взрыва
   fallOneCell: 120, // падение блока на одну ячейку
   delayFall: 50, // задержка одного блока при падении
   spawn: 300,
   delete: 200,
 }
-
 
 export const GAME_LEVEL = [
   ['yellow', 'yellow', 'blue', 'blue', 'blue', 'blue', 'yellow', 'yellow'],
@@ -118,6 +118,22 @@ export const RESOURCES = [
     key: 'superBlock',
     type: 'image',
     url: require('../assets/super_block.png'),
+  },
+  {
+    key: 'bomb',
+    type: 'image',
+    url: require('../assets/bomb.png'),
+  },
+  {
+    key: 'explosion',
+    type: 'image',
+    url: require('../assets/explosion.png'),
+  },
+  {
+    key: 'explosionSpritesheet',
+    type: 'spritesheet',
+    url: require('../assets/explosionSpritesheet.png'),
+    config: {frameWidth: 256, frameHeight: 256}
   },
   {
     key: 'marvin',

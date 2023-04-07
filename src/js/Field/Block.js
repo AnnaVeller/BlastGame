@@ -1,11 +1,15 @@
 import {EVENTS, GAME_SETTINGS} from "../config"
 import Sprite from "../Engine/Sprite"
+import Bomb from "./Bomb"
+import Container from "../Engine/Container"
 
 const STATE = {
   simple: 'simple',
   super: 'super'
 }
-export default class Block extends Sprite {
+
+// TODO сделать на стейтах
+export default class Block extends Container {
   constructor(config) {
     super(config)
 
@@ -13,11 +17,38 @@ export default class Block extends Sprite {
     this.i = this.config.i
     this.j = this.config.j
 
-    this.setInteractive()
-    this.on('pointerdown', this.onTap, this)
-
-    this.state = STATE.simple
     this.isEnable = true // на клетку можно тапнуть
+
+    this.createBlockSimple()
+  }
+
+  createBlockSimple() {
+    this.state = STATE.simple
+    this.color = this.config.key
+
+    this.block = new Sprite({
+      scene: this.game,
+      key: this.config.key,
+      interactive: true,
+      OnPointerdown: () => this.onTap()
+    })
+
+    this.add([this.block])
+  }
+
+  createBlockSuper() {
+    this.state = STATE.super
+    this.color = ''
+
+    this.block = new Sprite({
+      scene: this.game, key: 'superBlock',
+      interactive: true,
+      OnPointerdown: () => this.onTap()
+    })
+
+    const bomb = new Bomb({scene: this.game})
+
+    this.add([this.block, bomb])
   }
 
   isSimple() {
@@ -25,9 +56,8 @@ export default class Block extends Sprite {
   }
 
   changeToSuperBlock() {
-    this.state = STATE.super
-    this.color = ''
-    this.setTexture('superBlock')
+    this.block.destroy()
+    this.createBlockSuper()
   }
 
   onTap() {

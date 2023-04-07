@@ -13,11 +13,34 @@ export default class Sprite extends Phaser.GameObjects.Sprite {
     this.changeInteractive(this.config.interactive)
     this.onPointerDown(this.config.OnPointerdown)
     this.setVisible(this.config.visible)
+    this.setAngle(this.config.angle)
+
+    if (this.config.devMode) {
+      this.turnOnDebug()
+    }
   }
 
   onPointerDown(func) {
     this.on('pointerdown', () => func && func())
   }
+
+  turnOnDebug() {
+    this.setInteractive()
+    this.game.input.setDraggable(this)
+
+    this.game.input.on('dragstart', function (pointer, gameObject) {
+      gameObject.setTint(0xff0000)
+    })
+    this.game.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+      gameObject.x = dragX
+      gameObject.y = dragY
+    })
+    this.game.input.on('dragend', function (pointer, gameObject) {
+      gameObject.clearTint()
+      console.log(`x: ${Math.round(gameObject.x)}, y: ${Math.round(gameObject.y)}`)
+    })
+  }
+
 
   changeInteractive(mode) {
     if (mode) {
@@ -45,6 +68,9 @@ export default class Sprite extends Phaser.GameObjects.Sprite {
       visible: true,
       interactive: false,
       tint: 0xffffff,
+      angle: 0, // градусы
+      devMode: false,
+      key: ''
     }
   }
 

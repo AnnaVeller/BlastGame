@@ -11,6 +11,7 @@ export default class BootScene extends Phaser.Scene {
     RESOURCES.forEach((el) => {
       el.type === 'image' && this.load.image(el.key, el.url)
       el.type === 'font' && this.load.bitmapFont(el.key, el.url.png, el.url.xml)
+      el.type === 'spritesheet' && this.load.spritesheet(el.key, el.url, el.config)
     })
   }
 
