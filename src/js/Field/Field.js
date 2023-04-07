@@ -52,14 +52,19 @@ export default class Field extends Container {
   deleteCloseBlocks(mainBlock) {
     if (!this.isEnable) return false
 
-    const {minCells} = GAME_SETTINGS
+    const {minCells, superBlockCount} = GAME_SETTINGS
 
-    const delArray = Finder.recursiveFind(mainBlock, [mainBlock], this.allBlocks)
+    const delArray = Finder.recursiveFind(mainBlock, [], this.allBlocks)
 
     // не набрано минимальное кол-во одинаковых блоков рядом
     if (delArray.length < minCells) return false
-
     this.disable()
+
+    if (delArray.length >= superBlockCount) {
+      // выбрасываем из рассмотрения тапнутый блок
+      delArray.splice(delArray.indexOf(mainBlock), 1)
+      mainBlock.changeToSuperBlock()
+    }
 
     this.startDeleteFallScenario(delArray)
 
@@ -76,6 +81,10 @@ export default class Field extends Container {
     this.startDeleteFallScenario(delArray, TIME.bombFallDelay)
 
     return true
+  }
+
+  deleteSuperBlock(superBlock) {
+    this.deleteRadius(superBlock, GAME_SETTINGS.superBlockR)
   }
 
   // расположить фишки в верном порядке по высоте

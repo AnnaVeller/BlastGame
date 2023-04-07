@@ -82,43 +82,49 @@ export default class GameScene extends Phaser.Scene {
   onBlockTap(block) {
     if (!this.isEnable) return
 
-    // TODO отделить код состояний
-    if (this.state === STATE.bomb) {
-      const flag = this.field.deleteRadius(block, GAME_SETTINGS.bombR)
+    switch (this.state) {
 
-      if (!flag) return
+      case STATE.game:
+        const flag1 = block.isSimple() ? this.field.deleteCloseBlocks(block) : this.field.deleteSuperBlock(block)
 
-      this.buttonBomb.setText(--this.bombs)
-      this.setGameState()
+        if (!flag1) return
 
-    } else if (this.state === STATE.game) {
-      const flag = this.field.deleteCloseBlocks(block)
+        this.labelMoves.setText(--this.moves)
+        this.moves === 0 && this.disable()
+        break
 
-      if (!flag) return
+      case STATE.bomb:
+        const flag2 = this.field.deleteRadius(block, GAME_SETTINGS.bombR)
 
-      this.labelMoves.setText(--this.moves)
-      this.moves === 0 && this.disable()
-    } else if (this.state === STATE.teleport) {
+        if (!flag2) return
 
-      if (this.blocksTap.includes(block)) {
-        // убираем блок из выбранных
-        this.field.deleteStroke(block)
-        this.blocksTap.splice(this.blocksTap.indexOf(block), 1)
+        this.buttonBomb.setText(--this.bombs)
+        this.setGameState()
+        break
 
-      } else {
-        this.blocksTap.push(block)
-        this.field.createStroke(block)
+      case STATE.teleport:
 
-        if (this.blocksTap.length === 2) {
-          this.field.deleteStrokes()
+        if (this.blocksTap.includes(block)) {
+          // убираем блок из выбранных
+          this.field.deleteStroke(block)
+          this.blocksTap.splice(this.blocksTap.indexOf(block), 1)
 
-          this.field.teleportBlocks(this.blocksTap[0], this.blocksTap[1])
-          this.buttonTeleport.setText(--this.teleports)
-          this.setGameState()
-          this.blocksTap = []
+        } else {
+          this.blocksTap.push(block)
+          this.field.createStroke(block)
+
+          if (this.blocksTap.length === 2) {
+            this.field.deleteStrokes()
+
+            this.field.teleportBlocks(this.blocksTap[0], this.blocksTap[1])
+            this.buttonTeleport.setText(--this.teleports)
+            this.setGameState()
+            this.blocksTap = []
+          }
         }
-      }
-
+        break
+      default:
+        break
     }
   }
 

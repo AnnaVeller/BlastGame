@@ -1,6 +1,10 @@
 import {EVENTS, GAME_SETTINGS} from "../config"
 import Sprite from "../Engine/Sprite"
 
+const STATE = {
+  simple: 'simple',
+  super: 'super'
+}
 export default class Block extends Sprite {
   constructor(config) {
     super(config)
@@ -12,7 +16,18 @@ export default class Block extends Sprite {
     this.setInteractive()
     this.on('pointerdown', this.onTap, this)
 
+    this.state = STATE.simple
     this.isEnable = true // на клетку можно тапнуть
+  }
+
+  isSimple() {
+    return this.state === STATE.simple
+  }
+
+  changeToSuperBlock() {
+    this.state = STATE.super
+    this.color = ''
+    this.setTexture('superBlock')
   }
 
   onTap() {

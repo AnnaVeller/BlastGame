@@ -13,6 +13,8 @@ export const GAME_SETTINGS = {
   bombs: 3, // кол-во бомб
   bombR: 3, // радиус сжигания тайлов от бомбы
   teleports: 7,
+  superBlockCount: 5, // столько блоков нужно чтобы образовался супер блок
+  superBlockR: 4,
 }
 
 export const TIME = {
@@ -111,6 +113,11 @@ export const RESOURCES = [
     key: 'stroke',
     type: 'image',
     url: require('../assets/stroke_red.png'),
+  },
+  {
+    key: 'superBlock',
+    type: 'image',
+    url: require('../assets/super_block.png'),
   },
   {
     key: 'marvin',
