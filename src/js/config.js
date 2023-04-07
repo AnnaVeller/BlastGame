@@ -15,6 +15,17 @@ export const GAME_SETTINGS = {
   teleports: 7,
 }
 
+export const TIME = {
+  shuffle: 500,
+  teleport: 300,
+  bombFallDelay: 300, // задержка опадения фишек после взрыва
+  fallOneCell: 120, // падение блока на одну ячейку
+  delayFall: 50, // задержка одного блока при падении
+  spawn: 300,
+  delete: 200,
+}
+
+
 export const GAME_LEVEL = [
   ['yellow', 'yellow', 'blue', 'blue', 'blue', 'blue', 'yellow', 'yellow'],
   ['yellow', 0, 'blue', 'blue', 'blue', 'blue', 0, 'yellow'],

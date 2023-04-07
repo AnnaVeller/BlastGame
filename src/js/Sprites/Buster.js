@@ -1,22 +1,12 @@
 import BitmapText from "../Engine/BitmapText"
 import Sprite from "../Engine/Sprite"
+import Container from "../Engine/Container"
 
-export default class Buster extends Phaser.GameObjects.Container {
+export default class Buster extends Container {
   constructor(config) {
-    super(config.scene, config.x, config.y)
-    config.scene.add.existing(this)
-
-    this.game = config.scene
-    this.config = this.getDefaultConfig(config)
-
-    this.setScale(this.config.scale.x, this.config.scale.y)
-    this.setVisible(this.config.visible)
-    this.setPosition(this.config.x, this.config.y)
-    this.alpha = this.config.alpha
-    this.pressEvent = this.config.action
-
+    super(config)
     this.isEnable = true
-    this.isPress = false
+    this.pressEvent = this.config.action
 
     this.createBusterBtn()
   }
@@ -63,7 +53,6 @@ export default class Buster extends Phaser.GameObjects.Container {
   }
 
   hideChoose() {
-    this.isPress = false
     this.stroke.setVisible(false)
 
     this.game.tweens.add({
@@ -75,7 +64,6 @@ export default class Buster extends Phaser.GameObjects.Container {
   }
 
   showChoose() {
-    this.isPress = true
     this.stroke.setVisible(true)
 
     this.game.tweens.add({
@@ -86,27 +74,27 @@ export default class Buster extends Phaser.GameObjects.Container {
     })
   }
 
-  changeInteractive(mode) {
-    if (mode) {
-      this.enableInteractive()
-    } else {
-      this.disableInteractive()
-    }
-  }
+  // changeInteractive(mode) {
+  //   if (mode) {
+  //     this.enableInteractive()
+  //   } else {
+  //     this.disableInteractive()
+  //   }
+  // }
 
-  enable() {
-    this.isEnable = true
-  }
+  // enable() {
+  //   this.isEnable = true
+  // }
 
   disable() {
     this.isEnable = false
   }
 
-  enableInteractive() {
-    this.enable()
-    this.button.setInteractive()
-    this.button.clearTint()
-  }
+  // enableInteractive() {
+  //   this.enable()
+  //   this.button.setInteractive()
+  //   this.button.clearTint()
+  // }
 
   disableInteractive() {
     this.disable()
@@ -120,12 +108,8 @@ export default class Buster extends Phaser.GameObjects.Container {
   }
 
   getDefaultConfig(config) {
-    return Object.assign({
-      x: 0, y: 0,
+    return Object.assign(super.getDefaultConfig(config), {
       name: '',
-      alpha: 1,
-      scale: {x: 1, y: 1},
-      visible: true,
       maxValue: 0,
       action: ''
     }, config)

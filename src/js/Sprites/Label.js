@@ -1,14 +1,15 @@
 import Sprite from "../Engine/Sprite"
 import BitmapText from "../Engine/BitmapText"
+import Container from "../Engine/Container"
 
-export default class Label extends Phaser.GameObjects.Container {
+export default class Label extends Container {
   constructor(config) {
-    super(config.scene, config.x, config.y)
-    config.scene.add.existing(this)
+    super(config)
 
-    this.game = config.scene
-    this.config = this.getDefaultConfig(config)
+    this.createLabel()
+  }
 
+  createLabel() {
     const label = new Sprite({
       scene: this.game,
       x: 0, y: 0,
@@ -41,7 +42,7 @@ export default class Label extends Phaser.GameObjects.Container {
   }
 
   getDefaultConfig(config) {
-    return Object.assign({
+    return Object.assign(super.getDefaultConfig(config), {
       x: 0, y: 0,
       name: 'Очки',
       beginCount: 0,

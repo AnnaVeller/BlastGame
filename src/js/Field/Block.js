@@ -22,18 +22,14 @@ export default class Block extends Sprite {
     this.game.events.emit(EVENTS.blockTap, this)
   }
 
-  getColor() {
-    return this.color
-  }
-
-  deleteAnimation() {
+  deleteAnimation(duration = 100) {
     this.disable()
 
     this.game.tweens.add({
       targets: this,
       scaleX: 0,
       scaleY: 0,
-      duration: 200,
+      duration,
     })
   }
 
@@ -48,7 +44,7 @@ export default class Block extends Sprite {
     })
   }
 
-  spawnAnimation() {
+  spawnAnimation(duration = 100) {
     this.disable()
 
     this.visible = true
@@ -59,7 +55,7 @@ export default class Block extends Sprite {
       scaleX: 1,
       scaleY: 1,
       ease: 'Sine.easeOut',
-      duration: 300,
+      duration,
       onComplete: () => this.enable()
     })
   }
@@ -75,7 +71,7 @@ export default class Block extends Sprite {
   }
 
   // падение блока на yCount блоков
-  blockFall(yCount, oneTime = 150, delay = 0) {
+  blockFall(yCount, oneTime = 100, delay = 0) {
     this.disable()
 
     this.game.tweens.add({

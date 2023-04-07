@@ -1,12 +1,12 @@
 import Phaser from "phaser"
 import {resize} from "../Engine/resizer"
-import Field from "../Sprites/Field"
+import Field from "../Field/Field"
 import Label from "../Sprites/Label"
 import Sprite from "../Engine/Sprite"
 import BombBuster from "../Sprites/BombBuster"
 import TeleportBuster from "../Sprites/TeleportBuster"
 import MixBuster from "../Sprites/MixBuster"
-import {EVENTS, GAME_SETTINGS} from "../config"
+import {EVENTS, GAME_SETTINGS, TIME} from "../config"
 
 const STATE = {
   game: 'game',
@@ -21,9 +21,6 @@ export default class GameScene extends Phaser.Scene {
   }
 
   init() {
-    this.sprites = {}
-    this.containers = {}
-
     this.moves = GAME_SETTINGS.moves
     this.shuffles = GAME_SETTINGS.shuffles
     this.points = 0
@@ -41,86 +38,88 @@ export default class GameScene extends Phaser.Scene {
     new Sprite({scene: this, key: 'bg', origin: {x: 0, y: 0}})
 
     this.field = new Field({scene: this, x: 150, y: 150})
-
     this.labelPoints = new Label({scene: this, name: 'Очки', endCount: GAME_SETTINGS.points})
     this.labelMoves = new Label({scene: this, name: 'Ходы', beginCount: this.moves, endCount: this.moves})
     this.buttonMix = new MixBuster({scene: this})
     this.buttonBomb = new BombBuster({scene: this})
     this.buttonTeleport = new TeleportBuster({scene: this})
 
-    // тап на блок
-    this.events.on(EVENTS.blockTap, (block) => {
-      if (!this.isEnable) return
-
-      // TODO отделить код состояний
-      if (this.state === STATE.bomb) {
-        const flag = this.field.deleteRadius(block, GAME_SETTINGS.bombR)
-
-        if (!flag) return
-
-        this.buttonBomb.setText(--this.bombs)
-        this.setGameState()
-
-      } else if (this.state === STATE.game) {
-        const flag = this.field.deleteCloseBlocks(block)
-
-        if (!flag) return
-
-        this.labelMoves.setText(--this.moves)
-        this.moves === 0 && this.disable()
-        this.moves === 0 && this.buttonMix.disableInteractive()
-        this.moves === 0 && this.buttonBomb.disableInteractive()
-      } else if (this.state === STATE.teleport) {
-
-        if (this.blocksTap.includes(block)) {
-          // убираем блок из выбранных
-          this.field.deleteStroke(block)
-          this.blocksTap.splice(this.blocksTap.indexOf(block), 1)
-
-        } else {
-          this.blocksTap.push(block)
-          this.field.createStroke(block)
-
-          if (this.blocksTap.length === 2) {
-            this.field.deleteStrokes()
-
-            this.field.teleportBlocks(this.blocksTap[0], this.blocksTap[1])
-            this.buttonTeleport.setText(--this.teleports)
-            this.setGameState()
-            this.blocksTap = []
-          }
-        }
-
-      }
-    })
-
-    this.events.on(EVENTS.endAction, (count) => {
-      this.points += count
-      this.labelPoints.setText(this.points)
-
-      this.points >= GAME_SETTINGS.points && this.winGame()
-      this.moves === 0 && this.endGame()
-    })
-
-    this.events.on(EVENTS.pressShuffle, () => {
-      if (!this.isEnable || !this.field.isEnable) return
-
-      this.disable()
-      this.setMixState()
-      this.field.shuffle()
-      this.buttonMix.setText(--this.shuffles)
-      this.time.delayedCall(500, this.setGameState, [], this)
-      this.time.delayedCall(500, this.enable, [], this)
-    })
-
-    this.events.on(EVENTS.pressBomb, () =>
-      this.state === STATE.bomb ? this.setGameState() : this.setBombState())
-
-    this.events.on(EVENTS.pressTeleport, () =>
-      this.state === STATE.teleport ? this.setGameState() : this.setTeleportState())
+    this.events.on(EVENTS.blockTap, this.onBlockTap, this) // тап на блок
+    this.events.on(EVENTS.pressShuffle, this.pressShuffle, this)
+    this.events.on(EVENTS.pressBomb, this.pressBomb, this)
+    this.events.on(EVENTS.pressTeleport, this.pressTeleport, this)
+    this.events.on(EVENTS.endAction, this.endAction, this)
 
     this.scale.on('resize', this.resize, this)
     this.resize(this.scale.gameSize)
+  }
+
+  pressTeleport() {
+    this.state === STATE.teleport ? this.setGameState() : this.setTeleportState()
+  }
+
+  pressBomb() {
+    this.state === STATE.bomb ? this.setGameState() : this.setBombState()
+  }
+
+  pressShuffle() {
+    if (!this.isEnable || !this.field.isEnable) return
+
+    this.setMixState()
+    this.field.shuffleBlocks()
+    this.buttonMix.setText(--this.shuffles)
+    this.time.delayedCall(TIME.shuffle, this.setGameState, [], this)
+  }
+
+  endAction(count) {
+    this.points += count
+    this.labelPoints.setText(this.points)
+
+    this.points >= GAME_SETTINGS.points && this.winGame()
+    this.moves === 0 && this.endGame()
+  }
+
+  onBlockTap(block) {
+    if (!this.isEnable) return
+
+    // TODO отделить код состояний
+    if (this.state === STATE.bomb) {
+      const flag = this.field.deleteRadius(block, GAME_SETTINGS.bombR)
+
+      if (!flag) return
+
+      this.buttonBomb.setText(--this.bombs)
+      this.setGameState()
+
+    } else if (this.state === STATE.game) {
+      const flag = this.field.deleteCloseBlocks(block)
+
+      if (!flag) return
+
+      this.labelMoves.setText(--this.moves)
+      this.moves === 0 && this.disable()
+    } else if (this.state === STATE.teleport) {
+
+      if (this.blocksTap.includes(block)) {
+        // убираем блок из выбранных
+        this.field.deleteStroke(block)
+        this.blocksTap.splice(this.blocksTap.indexOf(block), 1)
+
+      } else {
+        this.blocksTap.push(block)
+        this.field.createStroke(block)
+
+        if (this.blocksTap.length === 2) {
+          this.field.deleteStrokes()
+
+          this.field.teleportBlocks(this.blocksTap[0], this.blocksTap[1])
+          this.buttonTeleport.setText(--this.teleports)
+          this.setGameState()
+          this.blocksTap = []
+        }
+      }
+
+    }
   }
 
   deleteTeleportSettings() {
@@ -172,6 +171,10 @@ export default class GameScene extends Phaser.Scene {
   endGame() {
     this.points >= GAME_SETTINGS.points && this.winGame()
     this.points < GAME_SETTINGS.points && this.failGame()
+
+    this.buttonMix.disableInteractive()
+    this.buttonBomb.disableInteractive()
+    this.buttonTeleport.disableInteractive()
   }
 
   winGame() {
