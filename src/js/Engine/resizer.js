@@ -15,16 +15,24 @@ export function resize(state) {
   const midX = state.cameras.main.midPoint.x
   const midY = state.cameras.main.midPoint.y
 
-  const worldView = getWorldView(state.cameras.main)
+  const cornerLT = getLeftTopCorner(state.cameras.main)
+  const cornerRB = getRightBottomCorner(state.cameras.main)
 
-  return {height, width, scaleFactor, isLandscape, midX, midY, aspectRatio, worldView}
+  return {height, width, scaleFactor, isLandscape, midX, midY, aspectRatio, cornerLT, cornerRB}
 }
 
-function getWorldView(camera) {
+function getLeftTopCorner(camera) {
   // this.cameras.main.worldView - в начале работает некорректно
 
   return {
     x: camera.midPoint.x - (camera.displayWidth / 2),
     y: camera.midPoint.y - (camera.displayHeight / 2)
+  }
+}
+
+function getRightBottomCorner(camera) {
+  return {
+    x: camera.midPoint.x + (camera.displayWidth / 2),
+    y: camera.midPoint.y + (camera.displayHeight / 2)
   }
 }

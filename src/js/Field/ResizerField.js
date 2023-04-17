@@ -5,8 +5,8 @@ export default class ResizerField {
   static resize({height, width, scaleFactor, isLandscape, midX, midY, aspectRatio}) {
     const {cols, rows, size} = GAME_SETTINGS
 
-    const fieldWidth = rows * size
-    const fieldHeight = cols * size
+    const fieldHeight = rows * size
+    const fieldWidth = cols * size
 
     let scale, x, y
 
@@ -30,7 +30,7 @@ export default class ResizerField {
       }
 
       x = midX - (fieldWidth / 2 - size / 2) * scale
-      y = midY * 2 + (size / 2 - fieldHeight - 100) * scale - (1 - aspectRatio) * 300
+      y = midY * 2 + (size / 2 - fieldHeight - 120) * scale - (1 - aspectRatio) * 300
     }
 
     return {scale, x, y}

@@ -204,20 +204,21 @@ export default class GameScene extends Phaser.Scene {
 
     const resizeData = resize(this)
 
-    const {isLandscape, scaleFactor, worldView} = resizeData
+    const {isLandscape, cornerLT, cornerRB} = resizeData
 
     if (isLandscape) {
-      this.labelPoints.setPosition(50 + 180 * scaleFactor, worldView.y + 200)
-      this.labelMoves.setPosition(50 + 180 * scaleFactor, worldView.y + 300)
-      this.buttonMix.setPosition(50 + 180 * scaleFactor, worldView.y + 400)
-      this.buttonBomb.setPosition(50 + 180 * scaleFactor, worldView.y + 500)
-      this.buttonTeleport.setPosition(50 + 180 * scaleFactor, worldView.y + 600)
+      this.labelPoints.setPosition(cornerLT.x + 150, cornerLT.y + 200)
+      this.labelMoves.setPosition(cornerLT.x + 150, cornerLT.y + 300)
+      this.buttonMix.setPosition(cornerLT.x + 150, cornerLT.y + 450)
+      this.buttonBomb.setPosition(cornerLT.x + 150, cornerLT.y + 550)
+      this.buttonTeleport.setPosition(cornerLT.x + 150, cornerLT.y + 650)
     } else {
-      this.labelPoints.setPosition(worldView.x + 150, worldView.y + 50)
-      this.labelMoves.setPosition(worldView.x + 150, worldView.y + 150)
-      this.buttonMix.setPosition(worldView.x + 150, worldView.y + 250)
-      this.buttonBomb.setPosition(worldView.x + 150, worldView.y + 350)
-      this.buttonTeleport.setPosition(worldView.x + 150, worldView.y + 450)
+      this.labelPoints.setPosition(cornerLT.x + 150, 70)
+      this.labelMoves.setPosition(cornerLT.x + 150, 170)
+
+      this.buttonMix.setPosition(cornerRB.x - 140, cornerLT.y + 50)
+      this.buttonBomb.setPosition(cornerRB.x - 140, cornerLT.y + 150)
+      this.buttonTeleport.setPosition(cornerRB.x - 140, cornerLT.y + 250)
     }
 
     this.field.resizeField(resizeData)

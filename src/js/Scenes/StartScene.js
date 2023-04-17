@@ -11,7 +11,7 @@ export default class StartScene extends Phaser.Scene {
 
   create() {
     new Sprite({scene: this, key: 'bg', origin: {x: 0, y: 0}})
-    new Sprite({scene: this, key: 'panel', x: 700, y: 700, scale: {x: 0.6, y: 0.6}})
+    new Sprite({scene: this, key: 'panel', x: 700, y: 700, scale: {x: 0.65, y: 0.6}})
 
     this.input.on('pointerdown', () => this.scene.start('Game'), this)
 

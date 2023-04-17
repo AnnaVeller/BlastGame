@@ -9,6 +9,7 @@ export default class Sprite extends Phaser.GameObjects.Sprite {
     this.alpha = this.config.alpha
     this.setScale(this.config.scale.x, this.config.scale.y)
     this.setOrigin(this.config.origin.x, this.config.origin.y)
+    this.setPosition(this.config.x, this.config.y)
 
     this.changeInteractive(this.config.interactive)
     this.onPointerDown(this.config.OnPointerdown)

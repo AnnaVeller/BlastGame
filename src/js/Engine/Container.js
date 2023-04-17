@@ -10,6 +10,7 @@ export default class Container extends Phaser.GameObjects.Container {
     this.setVisible(this.config.visible)
     this.setPosition(this.config.x, this.config.y)
     this.alpha = this.config.alpha
+    this.setAngle(this.config.angle)
   }
 
   getDefaultConfig(config) {
@@ -18,6 +19,7 @@ export default class Container extends Phaser.GameObjects.Container {
       alpha: 1,
       scale: {x: 1, y: 1},
       visible: true,
+      angle: 0
     }, config)
   }
 
