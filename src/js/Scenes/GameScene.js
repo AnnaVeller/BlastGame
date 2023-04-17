@@ -85,18 +85,23 @@ export default class GameScene extends Phaser.Scene {
     switch (this.state) {
 
       case STATE.game:
-        const flag1 = block.isSimple() ? this.field.deleteCloseBlocks(block) : this.field.deleteSuperBlock(block)
+        const canDelete = this.field.tryDeleteBlock(block)
 
-        if (!flag1) return
+        if (!canDelete) return
+
+        if (canDelete === -1) {
+          block.wrongAnimation()
+          return
+        }
 
         this.labelMoves.setText(--this.moves)
         this.moves === 0 && this.disable()
         break
 
       case STATE.bomb:
-        const flag2 = this.field.deleteRadius(block, GAME_SETTINGS.bombR)
+        const canDeleteR = this.field.deleteRadius(block, GAME_SETTINGS.bombR)
 
-        if (!flag2) return
+        if (!canDeleteR) return
 
         this.buttonBomb.setText(--this.bombs)
         this.setGameState()

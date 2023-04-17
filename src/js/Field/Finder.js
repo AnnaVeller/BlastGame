@@ -5,7 +5,7 @@ export default class Finder {
   // проверка на цвет блока
   static isSameColor(i, j, color, allBlocks) {
     const {rows, cols} = GAME_SETTINGS
-    return i >= 0 && j >= 0 && i < rows && j < cols && allBlocks[i][j] && allBlocks[i][j].color === color
+    return i >= 0 && j >= 0 && i < rows && j < cols && allBlocks[i][j] && allBlocks[i][j].getColor() === color
   }
 
   // возвращает блок если совпадает по цвету
@@ -21,13 +21,13 @@ export default class Finder {
   }
 
   // возвращает массив исключенных из blocks excludeBlock
-  static excludeBlocks(blocks, excludeBlock) {
-    return blocks.filter(block => !excludeBlock.find(el => el.i === block.i && el.j === block.j))
+  static excludeBlocks(blocks, excludeBlocks) {
+    return blocks.filter(block => !excludeBlocks.find(el => el.i === block.i && el.j === block.j))
   }
 
   static recursiveFind(newBlock, oldBlocks, allBlocks) {
     // новые блоки такого же цвета справа/слева/сверху/снизу, исключая уже записанные
-    const newBlocks = this.excludeBlocks(this.getNearSameBlocks(newBlock.i, newBlock.j, newBlock.color, allBlocks), oldBlocks)
+    const newBlocks = this.excludeBlocks(this.getNearSameBlocks(newBlock.i, newBlock.j, newBlock.getColor(), allBlocks), oldBlocks)
 
     // новых блоков больше нет
     if (!newBlocks.length) return []
@@ -69,5 +69,27 @@ export default class Finder {
     }
 
     return delArray
+  }
+
+  static getBlocksLine(block, allBlocks) {
+    let blockLine = [block]
+    const {cols} = GAME_SETTINGS
+
+    for (let j = 0; j < cols; j++) {
+      blockLine = this.addElement(blockLine, block.i, j, allBlocks)
+    }
+
+    return blockLine
+  }
+
+  static getBlocksCol(block, allBlocks) {
+    let blockLine = [block]
+    const {rows} = GAME_SETTINGS
+
+    for (let i = 0; i < rows; i++) {
+      blockLine = this.addElement(blockLine, i, block.j, allBlocks)
+    }
+
+    return blockLine
   }
 }

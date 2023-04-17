@@ -9,6 +9,7 @@ import ResizerField from "./ResizerField"
 import Teleport from "./Teleport"
 import Animations from "./Animations"
 import Explosion from "./Explosion"
+import {STATE} from "./Block"
 
 export default class Field extends Container {
   constructor(config) {
@@ -50,21 +51,32 @@ export default class Field extends Container {
     this.game.time.delayedCall(TIME.teleport, this.enable, [], this)
   }
 
-  deleteCloseBlocks(mainBlock) {
+  tryDeleteBlock(block) {
     if (!this.isEnable) return false
 
-    const {minCells, superBlockCount} = GAME_SETTINGS
+    if (block.getType() === STATE.simple) {
+      return this.deleteCloseBlocks(block)
+    }
+
+    return this.deleteSuperBlock(block)
+  }
+
+  deleteCloseBlocks(mainBlock) {
+    const {minCells, superBlockCount, rocketBlockCount} = GAME_SETTINGS
 
     const delArray = Finder.recursiveFind(mainBlock, [], this.allBlocks)
 
     // не набрано минимальное кол-во одинаковых блоков рядом
-    if (delArray.length < minCells) return false
+    if (delArray.length < minCells) return -1
     this.disable()
 
     if (delArray.length >= superBlockCount) {
       // выбрасываем из рассмотрения тапнутый блок
       delArray.splice(delArray.indexOf(mainBlock), 1)
       mainBlock.changeToSuperBlock()
+    } else if (delArray.length >= rocketBlockCount) {
+      delArray.splice(delArray.indexOf(mainBlock), 1)
+      mainBlock.changeToRocketBlock()
     }
 
     this.startDeleteFallScenario(delArray)
@@ -77,17 +89,65 @@ export default class Field extends Container {
 
     this.disable()
 
-    const delArray = Finder.getBlocksAround(block, r, this.allBlocks)
+    let delArray = Finder.getBlocksAround(block, r, this.allBlocks)
 
-    delArray.forEach(el => this.add(new Explosion({scene: this.game, x: el.x, y: el.y})))
+    delArray = this.findDeletingBlocks(delArray)
 
-    this.startDeleteFallScenario(delArray, TIME.bombFallDelay)
+    this.deleteBlocks(delArray)
 
     return true
   }
 
-  deleteSuperBlock(superBlock) {
-    this.deleteRadius(superBlock, GAME_SETTINGS.superBlockR)
+  deleteSuperBlock(block) {
+    let addBlocks = [block] // блоки задеваемые на этой интерации
+
+    const allDeleteBlocks = this.findDeletingBlocks(addBlocks)
+
+    this.deleteBlocks(allDeleteBlocks)
+
+    return true
+  }
+
+  // ищет суперблоки среди удаляемых
+  findDeletingBlocks(addBlocks) {
+    const delArray = []
+
+    do {
+      const newDelBlocks = []
+
+      for (let i = 0; i < addBlocks.length; i++) {
+        const newBlocks = Finder.excludeBlocks(this.getDeletingBlocks(addBlocks[i]), delArray)
+        newDelBlocks.push(...Finder.excludeBlocks(newBlocks, newDelBlocks))
+      }
+
+      delArray.push(...newDelBlocks)
+
+      addBlocks = newDelBlocks.filter(block => block.getType() !== STATE.simple)
+
+    } while (addBlocks.length)
+
+    return delArray
+  }
+
+  getDeletingBlocks(block) {
+    switch (block.getType()) {
+      case STATE.bomb:
+        return Finder.getBlocksAround(block, GAME_SETTINGS.superBlockR, this.allBlocks)
+      case STATE.rocket:
+        return Finder.getBlocksLine(block, this.allBlocks)
+      case STATE.rocketVertical:
+        return Finder.getBlocksCol(block, this.allBlocks)
+      case STATE.simple:
+        return [block]
+    }
+  }
+
+  deleteBlocks(delArray) {
+    this.disable()
+
+    delArray.forEach(block => this.add(new Explosion({scene: this.game, x: block.x, y: block.y})))
+
+    this.startDeleteFallScenario(delArray, TIME.fallDelay)
   }
 
   // расположить фишки в верном порядке по высоте

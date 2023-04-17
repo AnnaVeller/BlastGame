@@ -8,20 +8,21 @@ export const GAME_SETTINGS = {
   availableColors: ['blue', 'green', 'purple', 'red', 'yellow'],
   colors: ['green', 'red', 'yellow', 'blue'],
   shuffles: 30, // кол-во перемешиваний
-  points: 99, // кол-во очков
-  moves: 5, // кол-во ходов
+  points: 555, // кол-во очков
+  moves: 50, // кол-во ходов
   bombs: 3, // кол-во бомб
   bombR: 3, // радиус сжигания тайлов от бомбы
   teleports: 7,
-  superBlockCount: 5, // столько блоков нужно чтобы образовался супер блок
+  superBlockCount: 8, // столько блоков нужно чтобы образовался супер блок
   superBlockR: 4,
+  rocketBlockCount: 5, // столько блоков нужно чтобы образовалась ракета
 }
 
 export const TIME = {
   shuffle: 500,
   teleport: 300,
   explosion: 300,
-  bombFallDelay: 300, // задержка опадения фишек после взрыва
+  fallDelay: 400, // задержка опадения фишек после взрыва
   fallOneCell: 120, // падение блока на одну ячейку
   delayFall: 50, // задержка одного блока при падении
   spawn: 300,
@@ -123,6 +124,11 @@ export const RESOURCES = [
     key: 'bomb',
     type: 'image',
     url: require('../assets/bomb.png'),
+  },
+  {
+    key: 'rocket',
+    type: 'image',
+    url: require('../assets/rocket.png'),
   },
   {
     key: 'explosion',

@@ -1,70 +1,71 @@
 import {EVENTS, GAME_SETTINGS} from "../config"
-import Sprite from "../Engine/Sprite"
-import Bomb from "./Bomb"
+import BlockSimple from "./BlockSimple"
+import BlockBomb from "./BlockBomb"
 import Container from "../Engine/Container"
+import BlockRocket from "./BlockRocket"
 
-const STATE = {
+export const STATE = {
   simple: 'simple',
-  super: 'super'
+  rocket: 'rocket',
+  rocketVertical: 'rocketVertical',
+  bomb: 'bomb'
 }
 
-// TODO сделать на стейтах
 export default class Block extends Container {
   constructor(config) {
     super(config)
 
-    this.color = this.config.key
     this.i = this.config.i
     this.j = this.config.j
 
     this.isEnable = true // на клетку можно тапнуть
 
-    this.createBlockSimple()
-  }
+    this.states = {
+      BlockSimple: BlockSimple,
+      BlockBomb: BlockBomb,
+      BlockRocket: BlockRocket
+    }
 
-  createBlockSimple() {
-    this.state = STATE.simple
-    this.color = this.config.key
-
-    this.block = new Sprite({
+    this.state = new this.states.BlockSimple({
       scene: this.game,
       key: this.config.key,
-      interactive: true,
-      OnPointerdown: () => this.onTap()
+      onPointerDown: () => this.onTap(),
     })
-
-    this.add([this.block])
+    this.add(this.state)
   }
 
-  createBlockSuper() {
-    this.state = STATE.super
-    this.color = ''
-
-    this.block = new Sprite({
-      scene: this.game, key: 'superBlock',
-      interactive: true,
-      OnPointerdown: () => this.onTap()
-    })
-
-    const bomb = new Bomb({scene: this.game})
-
-    this.add([this.block, bomb])
+  getColor() {
+    return this.state.color
   }
 
-  isSimple() {
-    return this.state === STATE.simple
+  getType() {
+    return this.state.name
   }
 
   changeToSuperBlock() {
-    this.block.destroy()
-    this.createBlockSuper()
+    this.state.destroy()
+    this.state = new this.states.BlockBomb({scene: this.game, onPointerDown: () => this.onTap()})
+    this.add(this.state)
+  }
+
+  changeToRocketBlock() {
+    this.state.destroy()
+    this.state = new this.states.BlockRocket({scene: this.game, onPointerDown: () => this.onTap()})
+    this.add(this.state)
   }
 
   onTap() {
     if (!this.isEnable) return
 
-    this.pressBtnAnimation()
     this.game.events.emit(EVENTS.blockTap, this)
+  }
+
+  disable() {
+    this.isEnable = false
+  }
+
+  enable() {
+    this.isEnable = true
   }
 
   deleteAnimation(duration = 100) {
@@ -105,6 +106,23 @@ export default class Block extends Container {
     })
   }
 
+
+  rotate(angle, duration = 100, delay = 0) {
+    this.game.tweens.add({
+      targets: this,
+      angle,
+      duration,
+      delay,
+      ease: Phaser.Math.Easing.Sine.InOut
+    })
+  }
+
+  wrongAnimation(time = 300) {
+    this.rotate(-5, time / 4, 0)
+    this.rotate(5, time / 2, time / 4)
+    this.rotate(0, time / 4, time * 3 / 4)
+  }
+
   pressBtnAnimation() {
     this.game.tweens.add({
       targets: this,
@@ -127,14 +145,6 @@ export default class Block extends Container {
       ease: 'Sine.easeIn',
       onComplete: () => this.enable()
     })
-  }
-
-  disable() {
-    this.isEnable = false
-  }
-
-  enable() {
-    this.isEnable = true
   }
 
 
