@@ -2,9 +2,11 @@ const webpack = require("webpack")
 const path = require("path")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const {CleanWebpackPlugin} = require("clean-webpack-plugin")
+const CopyPlugin = require("copy-webpack-plugin")
 
 module.exports = {
   mode: "development",
+  devtool: "eval-cheap-source-map",
   module: {
     rules: [
       {
@@ -12,12 +14,21 @@ module.exports = {
         use: "raw-loader"
       },
       {
-        test: /\.(gif|png|jpe?g|svg|xml)$/i,
-        use: "file-loader"
-      }
+        test: /\.(png|jpe?g|atlas)$/i,
+        use: [
+          {
+            loader: "file-loader",
+          },
+        ],
+      },
     ]
   },
   plugins: [
+    new CopyPlugin({
+      patterns: [
+        {from: "src/assets", to: "assets"},
+      ],
+    }),
     new CleanWebpackPlugin({
       root: path.resolve(__dirname, "../")
     }),

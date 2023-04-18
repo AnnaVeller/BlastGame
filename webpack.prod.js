@@ -1,4 +1,4 @@
-const merge = require("webpack-merge")
+const {merge} = require("webpack-merge")
 const base = require("./webpack.dev")
 const TerserPlugin = require("terser-webpack-plugin")
 
@@ -9,8 +9,8 @@ module.exports = merge(base, {
   },
   devtool: false,
   performance: {
-    maxEntrypointSize: 900000,
-    maxAssetSize: 900000
+    maxEntrypointSize: 9000000,
+    maxAssetSize: 9000000
   },
   module: {
     rules: [
