@@ -1,6 +1,6 @@
-import Sprite from "../Engine/Sprite"
-import BitmapText from "../Engine/BitmapText"
-import Container from "../Engine/Container"
+import Sprite from '../Engine/Sprite'
+import BitmapText from '../Engine/BitmapText'
+import Container from '../Engine/Container'
 
 export default class Label extends Container {
   constructor(config) {

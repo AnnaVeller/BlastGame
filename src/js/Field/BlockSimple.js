@@ -1,6 +1,6 @@
-import Sprite from "../Engine/Sprite"
-import Container from "../Engine/Container"
-import {STATE} from "./Block"
+import Sprite from '../Engine/Sprite'
+import Container from '../Engine/Container'
+import {STATE} from './Block'
 
 export default class BlockSimple extends Container {
   constructor(config) {

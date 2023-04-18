@@ -1,4 +1,4 @@
-import {GAME_SETTINGS} from "../config"
+import {GAME_SETTINGS} from '../config'
 
 export default class Finder {
 

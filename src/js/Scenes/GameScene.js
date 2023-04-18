@@ -1,12 +1,12 @@
-import Phaser from "phaser"
-import {resize} from "../Engine/resizer"
-import Field from "../Field/Field"
-import Label from "../Sprites/Label"
-import Sprite from "../Engine/Sprite"
-import BombBuster from "../Sprites/BombBuster"
-import TeleportBuster from "../Sprites/TeleportBuster"
-import MixBuster from "../Sprites/MixBuster"
-import {EVENTS, GAME_SETTINGS, TIME} from "../config"
+import Phaser from 'phaser'
+import {resize} from '../Engine/resizer'
+import Field from '../Field/Field'
+import Label from '../UI/Label'
+import Sprite from '../Engine/Sprite'
+import BombBuster from '../UI/BombBuster'
+import TeleportBuster from '../UI/TeleportBuster'
+import MixBuster from '../UI/MixBuster'
+import {EVENTS, GAME_SETTINGS, TIME} from '../config'
 
 const STATE = {
   game: 'game',
@@ -32,6 +32,16 @@ export default class GameScene extends Phaser.Scene {
     this.state = STATE.game
 
     this.blocksTap = []
+  }
+
+  resetScene() {
+    this.init()
+    this.labelPoints.setText(this.points)
+    this.labelMoves.setText(this.moves)
+    this.buttonMix.reset()
+    this.buttonBomb.reset()
+    this.buttonTeleport.reset()
+    this.field.reset()
   }
 
   create() {

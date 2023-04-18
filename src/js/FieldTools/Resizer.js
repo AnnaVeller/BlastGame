@@ -1,6 +1,6 @@
-import {GAME_SETTINGS} from "../config"
+import {GAME_SETTINGS} from '../config'
 
-export default class ResizerField {
+export default class Resizer {
 
   static resize({height, width, scaleFactor, isLandscape, midX, midY, aspectRatio}) {
     const {cols, rows, size} = GAME_SETTINGS

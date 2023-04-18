@@ -1,7 +1,7 @@
-import Sprite from "../Engine/Sprite"
-import Bomb from "./Bomb"
-import Container from "../Engine/Container"
-import {STATE} from "./Block"
+import Sprite from '../Engine/Sprite'
+import Bomb from './Bomb'
+import Container from '../Engine/Container'
+import {STATE} from './Block'
 
 export default class BlockBomb extends Container {
   constructor(config) {

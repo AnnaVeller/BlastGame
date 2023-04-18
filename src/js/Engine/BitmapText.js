@@ -1,7 +1,7 @@
 export default class BitmapText extends Phaser.GameObjects.BitmapText {
 
   constructor(config) {
-    super(config.scene, config.x || 0, config.y || 0, config.font || 'marvin', config.text || '1', config.fontSize || 70)
+    super(config.scene, 0, 0, config.font || 'marvin', 'default', 50)
     config.scene.add.existing(this)
 
     this.game = config.scene
@@ -11,6 +11,9 @@ export default class BitmapText extends Phaser.GameObjects.BitmapText {
     this.setScale(this.config.scale.x, this.config.scale.y)
     this.setOrigin(this.config.origin.x, this.config.origin.y)
     this.setTint(this.config.tint)
+    this.setPosition(this.config.x, this.config.y)
+    this.setText(this.config.text)
+    this.setFontSize(this.config.fontSize)
   }
 
   getDefaultConfig(config) {

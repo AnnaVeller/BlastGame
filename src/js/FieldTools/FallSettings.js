@@ -1,4 +1,4 @@
-import {TIME} from "../config"
+import {TIME} from '../config'
 
 export default class FallSettings {
 

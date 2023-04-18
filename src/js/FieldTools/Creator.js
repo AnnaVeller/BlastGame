@@ -1,5 +1,5 @@
-import {GAME_LEVEL, GAME_SETTINGS, IS_EXPORT_FIELD} from "../config"
-import Block from "./Block"
+import {GAME_LEVEL, GAME_SETTINGS, IS_EXPORT_FIELD} from '../config'
+import Block from '../Field/Block'
 
 export default class Creator {
 
@@ -13,7 +13,7 @@ export default class Creator {
     return colors[rand]
   }
 
-  static createBlocks(state) {
+  static createBlocks(state, isExportField = IS_EXPORT_FIELD) {
     const {cols, rows, size, colors} = GAME_SETTINGS
     const allBlocks = Array.from(Array(rows), () => new Array(cols))
 
@@ -23,7 +23,7 @@ export default class Creator {
           scene: state.game,
           x: j * size, y: i * size,
           i: i, j: j,
-          key: IS_EXPORT_FIELD ? this.exportColor(i, j) : this.getRandomColor(colors)
+          key: isExportField ? this.exportColor(i, j) : this.getRandomColor(colors)
         })
 
       }

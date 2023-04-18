@@ -1,14 +1,21 @@
-import BitmapText from "../Engine/BitmapText"
-import Sprite from "../Engine/Sprite"
-import Container from "../Engine/Container"
+import BitmapText from '../Engine/BitmapText'
+import Sprite from '../Engine/Sprite'
+import Container from '../Engine/Container'
 
 export default class Buster extends Container {
   constructor(config) {
     super(config)
-    this.isEnable = true
+
     this.pressEvent = this.config.action
 
     this.createBusterBtn()
+
+    this.reset()
+  }
+
+  reset() {
+    this.enableInteractive()
+    this.setText(this.config.maxValue)
   }
 
   createBusterBtn() {
@@ -74,29 +81,22 @@ export default class Buster extends Container {
     })
   }
 
-  // changeInteractive(mode) {
-  //   if (mode) {
-  //     this.enableInteractive()
-  //   } else {
-  //     this.disableInteractive()
-  //   }
-  // }
-
-  // enable() {
-  //   this.isEnable = true
-  // }
+  enable() {
+    this.isEnable = true
+  }
 
   disable() {
     this.isEnable = false
   }
 
-  // enableInteractive() {
-  //   this.enable()
-  //   this.button.setInteractive()
-  //   this.button.clearTint()
-  // }
+  enableInteractive() {
+    this.enable()
+    this.button.setInteractive()
+    this.button.clearTint()
+  }
 
   disableInteractive() {
+    this.hideChoose()
     this.disable()
     this.button.removeInteractive()
     this.button.tint = 0x808080

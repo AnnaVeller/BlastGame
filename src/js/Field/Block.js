@@ -1,8 +1,8 @@
-import {EVENTS, GAME_SETTINGS} from "../config"
-import BlockSimple from "./BlockSimple"
-import BlockBomb from "./BlockBomb"
-import Container from "../Engine/Container"
-import BlockRocket from "./BlockRocket"
+import {EVENTS, GAME_SETTINGS} from '../config'
+import BlockSimple from './BlockSimple'
+import BlockBomb from './BlockBomb'
+import Container from '../Engine/Container'
+import BlockRocket from './BlockRocket'
 
 export const STATE = {
   simple: 'simple',
@@ -100,7 +100,7 @@ export default class Block extends Container {
       targets: this,
       scaleX: 1,
       scaleY: 1,
-      ease: 'Sine.easeOut',
+      ease: Phaser.Math.Easing.Sine.Out,
       duration,
       onComplete: () => this.enable()
     })
@@ -142,7 +142,7 @@ export default class Block extends Container {
       y: (this.i + yCount) * GAME_SETTINGS.size,
       delay,
       duration: yCount * oneTime,
-      ease: 'Sine.easeIn',
+      ease: Phaser.Math.Easing.Sine.In,
       onComplete: () => this.enable()
     })
   }

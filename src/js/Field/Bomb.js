@@ -1,5 +1,5 @@
-import Sprite from "../Engine/Sprite"
-import Container from "../Engine/Container"
+import Sprite from '../Engine/Sprite'
+import Container from '../Engine/Container'
 
 export default class Bomb extends Container {
   constructor(config) {

@@ -1,5 +1,5 @@
-import {EVENTS, GAME_SETTINGS} from "../config"
-import Buster from "./Buster"
+import {EVENTS, GAME_SETTINGS} from '../config'
+import Buster from './Buster'
 
 export default class TeleportBuster extends Buster {
   constructor(config) {

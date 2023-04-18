@@ -1,5 +1,5 @@
-import Phaser from "phaser"
-import {RESOURCES} from "../config"
+import Phaser from 'phaser'
+import {RESOURCES} from '../config'
 
 // Сцена загрузки изображений
 export default class BootScene extends Phaser.Scene {

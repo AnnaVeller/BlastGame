@@ -1,4 +1,4 @@
-import {GAME_SETTINGS, TIME} from "../config"
+import {GAME_SETTINGS, TIME} from '../config'
 
 export default class Animations {
 

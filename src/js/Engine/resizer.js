@@ -1,4 +1,4 @@
-import {GAME_DEFAULT_SIZE} from "../../index"
+import {GAME_DEFAULT_SIZE} from '../../index'
 
 export function resize(state) {
   const width = state.scale.gameSize.width // this.cameras.main.width // gameSize.width

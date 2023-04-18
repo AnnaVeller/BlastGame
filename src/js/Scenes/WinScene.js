@@ -1,7 +1,8 @@
-import Phaser from "phaser"
-import {resize} from "../Engine/resizer"
-import Sprite from "../Engine/Sprite"
-import BitmapText from "../Engine/BitmapText"
+import Phaser from 'phaser'
+import {resize} from '../Engine/resizer'
+import Sprite from '../Engine/Sprite'
+import Button from '../UI/Button'
+import FinishText from '../UI/FinishText'
 
 export default class WinScene extends Phaser.Scene {
   constructor() {
@@ -13,7 +14,11 @@ export default class WinScene extends Phaser.Scene {
 
   create() {
     new Sprite({scene: this, key: 'panel', x: 700, y: 700, scale: {x: 0.6, y: 0.6}})
-    new BitmapText({scene: this, x: 700, y: 700, text: 'You WIN!', fontSize: 100, tint: 0x92ff92})
+    const text = new FinishText({scene: this})
+    const btn = new Button({scene: this, text: 'next level', textFont: 56})
+
+    text.show()
+    btn.show()
 
     this.scale.on('resize', this.resize, this)
     this.resize(this.scale.gameSize)

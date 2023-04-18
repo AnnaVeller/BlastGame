@@ -1,4 +1,4 @@
-import Sprite from "../Engine/Sprite"
+import Sprite from '../Engine/Sprite'
 
 export default class Rocket extends Sprite {
   constructor(config) {

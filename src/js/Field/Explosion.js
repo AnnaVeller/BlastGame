@@ -1,5 +1,5 @@
-import Sprite from "../Engine/Sprite"
-import {TIME} from "../config"
+import Sprite from '../Engine/Sprite'
+import {TIME} from '../config'
 
 export default class Explosion extends Sprite {
   constructor(config) {
@@ -10,7 +10,6 @@ export default class Explosion extends Sprite {
       key: 'idle',
       frames: this.anims.generateFrameNumbers(this.config.key),
       duration: TIME.explosion,
-      // hideOnComplete: true
     })
 
     this.play({key: 'idle'})
