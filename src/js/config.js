@@ -57,41 +57,41 @@ export const RESOURCES = [
   {
     key: 'bg',
     type: 'image',
-    url: '../assets/images/bg.jpg',
+    url: './assets/images/bg.jpg',
   },
   {
     key: 'blocks',
     type: 'atlas',
-    url: '../assets/images/blocks.png',
-    json: '../assets/images/blocks.json',
+    url: './assets/images/blocks.png',
+    json: './assets/images/blocks.json',
   },
   {
     key: 'button',
     type: 'atlas',
-    url: '../assets/images/button.png',
-    json: '../assets/images/button.json',
+    url: './assets/images/button.png',
+    json: './assets/images/button.json',
   },
   {
     key: 'explosionSpritesheet',
     type: 'spritesheet',
-    url: '../assets/images/explosionSpritesheet.png',
+    url: './assets/images/explosionSpritesheet.png',
     config: {frameWidth: 256, frameHeight: 256}
   },
   {
     key: 'field',
     type: 'image',
-    url: '../assets/images/field.png',
+    url: './assets/images/field.png',
   },
   {
     key: 'panel',
     type: 'image',
-    url: '../assets/images/panel.png',
+    url: './assets/images/panel.png',
   },
   {
     key: 'marvin',
     type: 'font',
-    url: '../assets/fonts/Marvin/marvin.png',
-    xml: '../assets/fonts/Marvin/marvin.xml',
+    url: './assets/fonts/Marvin/marvin.png',
+    xml: './assets/fonts/Marvin/marvin.xml',
   },
 
 ]
