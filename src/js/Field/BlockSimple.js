@@ -11,7 +11,7 @@ export default class BlockSimple extends Container {
 
     this.block = new Sprite({
       scene: this.game,
-      key: this.config.key,
+      key: ['blocks', this.config.key],
       interactive: true,
       OnPointerdown: () => this.config.onPointerDown()
     })

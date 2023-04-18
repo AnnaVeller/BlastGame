@@ -55,108 +55,43 @@ export const EVENTS = {
 
 export const RESOURCES = [
   {
-    key: 'empty',
+    key: 'bg',
     type: 'image',
-    url: '../assets/empty.png',
+    url: '../assets/images/bg.jpg',
   },
   {
-    key: 'blue',
-    type: 'image',
-    url: '../assets/blue.png',
-  },
-  {
-    key: 'green',
-    type: 'image',
-    url: '../assets/green.png',
-  },
-  {
-    key: 'purple',
-    type: 'image',
-    url: '../assets/purple.png',
-  },
-  {
-    key: 'red',
-    type: 'image',
-    url: '../assets/red.png',
-  },
-  {
-    key: 'yellow',
-    type: 'image',
-    url: '../assets/yellow.png',
-  },
-  {
-    key: 'label',
-    type: 'image',
-    url: '../assets/label.png',
+    key: 'blocks',
+    type: 'atlas',
+    url: '../assets/images/blocks.png',
+    json: '../assets/images/blocks.json',
   },
   {
     key: 'button',
-    type: 'image',
-    url: '../assets/button.png',
-  },
-  {
-    key: 'panel',
-    type: 'image',
-    url: '../assets/panel.png',
-  },
-  {
-    key: 'bg',
-    type: 'image',
-    url: '../assets/bg.jpg',
-  },
-  {
-    key: 'btnStroke',
-    type: 'image',
-    url: '../assets/button_stroke.png',
-  },
-  {
-    key: 'buttonGreen',
-    type: 'image',
-    url: '../assets/button_green.png',
-  },
-  {
-    key: 'stroke',
-    type: 'image',
-    url: '../assets/stroke_red.png',
-  },
-  {
-    key: 'superBlock',
-    type: 'image',
-    url: '../assets/super_block.png',
-  },
-  {
-    key: 'bomb',
-    type: 'image',
-    url: '../assets/bomb.png',
-  },
-  {
-    key: 'rocket',
-    type: 'image',
-    url: '../assets/rocket.png',
-  },
-  {
-    key: 'explosion',
-    type: 'image',
-    url: '../assets/explosion.png',
-  },
-  {
-    key: 'field',
-    type: 'image',
-    url: '../assets/field.png',
+    type: 'atlas',
+    url: '../assets/images/button.png',
+    json: '../assets/images/button.json',
   },
   {
     key: 'explosionSpritesheet',
     type: 'spritesheet',
-    url: '../assets/explosionSpritesheet.png',
+    url: '../assets/images/explosionSpritesheet.png',
     config: {frameWidth: 256, frameHeight: 256}
+  },
+  {
+    key: 'field',
+    type: 'image',
+    url: '../assets/images/field.png',
+  },
+  {
+    key: 'panel',
+    type: 'image',
+    url: '../assets/images/panel.png',
   },
   {
     key: 'marvin',
     type: 'font',
-    url: {
-      png: '../assets/Marvin/marvin.png',
-      xml: '../assets/Marvin/marvin.xml',
-    },
+    url: '../assets/fonts/Marvin/marvin.png',
+    xml: '../assets/fonts/Marvin/marvin.xml',
   },
 
 ]

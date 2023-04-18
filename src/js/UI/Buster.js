@@ -22,7 +22,7 @@ export default class Buster extends Container {
     this.button = new Sprite({
       scene: this.game,
       x: 0, y: 0,
-      key: 'button',
+      key: ['button', 'button'],
       scale: {x: 0.6, y: 0.6},
       interactive: true,
       OnPointerdown: () => this.pressBtn()
@@ -31,7 +31,7 @@ export default class Buster extends Container {
     this.stroke = new Sprite({
       scene: this.game,
       x: 0, y: 0,
-      key: 'btnStroke',
+      key: ['button', 'button_stroke'],
       scale: {x: 0.6, y: 0.6},
       visible: false,
     })

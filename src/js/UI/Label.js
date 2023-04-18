@@ -13,7 +13,7 @@ export default class Label extends Container {
     const label = new Sprite({
       scene: this.game,
       x: 0, y: 0,
-      key: 'label',
+      key: ['button', 'label'],
       scale: {x: 0.6, y: 0.6}
     })
 

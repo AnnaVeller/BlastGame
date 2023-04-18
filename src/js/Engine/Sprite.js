@@ -1,6 +1,11 @@
 export default class Sprite extends Phaser.GameObjects.Sprite {
   constructor(config) {
-    super(config.scene, config.x, config.y, config.key)
+    if (typeof config.key === "string") {
+      super(config.scene, config.x, config.y, config.key)
+    } else {
+      // для загрузки атласа
+      super(config.scene, config.x, config.y, config.key[0], config.key[1] + '.png')
+    }
     config.scene.add.existing(this)
 
     this.game = config.scene

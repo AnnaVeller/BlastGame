@@ -13,7 +13,7 @@ export default class BlockRocket extends Container {
 
     this.block = new Sprite({
       scene: this.game,
-      key: 'superBlock',
+      key: ['blocks', 'super_block'],
       interactive: true,
       OnPointerdown: () => this.config.onPointerDown()
     })

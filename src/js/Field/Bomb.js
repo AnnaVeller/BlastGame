@@ -5,8 +5,8 @@ export default class Bomb extends Container {
   constructor(config) {
     super(config)
 
-    const bomb = new Sprite({scene: this.game, key: 'bomb', angle: -5, x: 1, y: 18})
-    const explosion = new Sprite({scene: this.game, key: 'explosion', x: 47, y: -42})
+    const bomb = new Sprite({scene: this.game, key: ['blocks', 'bomb'], angle: -5, x: 1, y: 18})
+    const explosion = new Sprite({scene: this.game, key: ['blocks', 'explosion'], x: 47, y: -42})
 
     this.game.tweens.add({
       targets: explosion,

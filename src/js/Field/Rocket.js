@@ -2,7 +2,7 @@ import Sprite from '../Engine/Sprite'
 
 export default class Rocket extends Sprite {
   constructor(config) {
-    config.key = 'rocket'
+    config.key = ['blocks', 'rocket']
     super(config)
 
     this.angle = this.config.isVertical ? -91 : -5

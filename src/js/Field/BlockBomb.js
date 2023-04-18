@@ -12,7 +12,7 @@ export default class BlockBomb extends Container {
     this.name = STATE.bomb
     this.block = new Sprite({
       scene: this.game,
-      key: 'superBlock',
+      key: ['blocks', 'super_block'],
       interactive: true,
       OnPointerdown: () => this.config.onPointerDown()
     })
