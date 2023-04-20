@@ -142,7 +142,7 @@ export default class Block extends Container {
       y: (this.i + yCount) * GAME_SETTINGS.size,
       delay,
       duration: yCount * oneTime,
-      ease: Phaser.Math.Easing.Sine.In,
+      ease: Phaser.Math.Easing.Quadratic.In,
       onComplete: () => this.enable()
     })
   }

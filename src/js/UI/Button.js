@@ -6,7 +6,8 @@ import Phaser from 'phaser'
 const TIME = {
   startDelay: 500,
   show: 400,
-  bounce: 300
+  bounce: 300,
+  click: 200
 }
 
 export default class Button extends Container {
@@ -57,11 +58,18 @@ export default class Button extends Container {
   }
 
   pressBtn() {
-    this.animation && this.animation.stop()
+    if (!this.isEnable) return
 
-    this.game.scene.stop('Fail')
-    this.game.scene.stop('Win')
-    this.game.scene.get('Game').resetScene()
+    this.animation && this.animation.stop()
+    this.disable()
+
+    this.animation = this.game.tweens.add({
+      targets: this,
+      scaleX: 0.2, scaleY: 0.2,
+      duration: TIME.click,
+      ease: Phaser.Math.Easing.Sine.InOut,
+      onComplete: this.config.onTap
+    })
   }
 
   enable() {
@@ -78,7 +86,8 @@ export default class Button extends Container {
       buttonImg: ['button', 'button_green'],
       textFont: 60,
       x: 700, y: 800,
-      scale: {x: 0, y: 0}
+      scale: {x: 0, y: 0},
+      onTap: () => {}
     }, config)
   }
 

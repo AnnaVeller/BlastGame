@@ -9,7 +9,7 @@ export const GAME_SETTINGS = {
   colors: ['green', 'red', 'yellow', 'blue'],
   shuffles: 30, // кол-во перемешиваний
   points: 555, // кол-во очков
-  moves: 50, // кол-во ходов
+  moves: 77, // кол-во ходов
   bombs: 3, // кол-во бомб
   bombR: 3, // радиус сжигания тайлов от бомбы
   teleports: 7,

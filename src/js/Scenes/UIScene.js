@@ -24,8 +24,12 @@ export default class UIScene extends Phaser.Scene {
     // стоп ресайза, если ушли с этой сцены
     if (!this.scene.settings.active) return
 
-    const {cornerLT, cornerRB} = resize(this)
-    this.soundContainer.setPosition(cornerLT.x + 100, cornerRB.y - 100)
+    const {cornerLT, cornerRB, isLandscape} = resize(this)
+    if (isLandscape) {
+      this.soundContainer.setPosition(cornerLT.x + 150, cornerRB.y - 70)
+    } else {
+      this.soundContainer.setPosition(cornerLT.x + 50, cornerRB.y - 230)
+    }
   }
 
 }

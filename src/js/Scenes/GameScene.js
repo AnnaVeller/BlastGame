@@ -89,12 +89,13 @@ export default class GameScene extends Phaser.Scene {
     this.points += count
     this.labelPoints.setText(this.points)
 
-    this.points >= GAME_SETTINGS.points && this.winGame()
-    this.moves === 0 && this.endGame()
+    if (this.points >= GAME_SETTINGS.points || !this.moves) {
+      this.endGame()
+    }
   }
 
   onBlockTap(block) {
-    if (!this.isEnable) return
+    if (!this.isEnable || !this.field.isEnable) return
 
     switch (this.state) {
 
@@ -117,7 +118,7 @@ export default class GameScene extends Phaser.Scene {
         }
 
         this.labelMoves.setText(--this.moves)
-        this.moves === 0 && this.disable()
+        // this.moves === 0 && this.disable()
         break
 
       case STATE.bomb:
@@ -212,36 +213,28 @@ export default class GameScene extends Phaser.Scene {
   }
 
   endGame() {
+    if (!this.isEnable) return
+    this.disable()
+
     this.points >= GAME_SETTINGS.points && this.winGame()
     this.points < GAME_SETTINGS.points && this.failGame()
 
     this.buttonMix.disableInteractive()
     this.buttonBomb.disableInteractive()
     this.buttonTeleport.disableInteractive()
+    this.field.showFade()
   }
 
   winGame() {
     this.audioSystem.play(SOUNDS.win)
 
-    this.disable()
     this.scene.launch('Win')
-    this.field.showFade()
-
-    this.buttonMix.disableInteractive()
-    this.buttonBomb.disableInteractive()
-    this.buttonTeleport.disableInteractive()
   }
 
   failGame() {
     this.audioSystem.play(SOUNDS.fail)
 
-    this.disable()
     this.scene.launch('Fail')
-    this.field.showFade()
-
-    this.buttonMix.disableInteractive()
-    this.buttonBomb.disableInteractive()
-    this.buttonTeleport.disableInteractive()
   }
 
   resize() {
@@ -250,14 +243,15 @@ export default class GameScene extends Phaser.Scene {
 
     const resizeData = resize(this)
 
-    const {isLandscape, cornerLT, cornerRB} = resizeData
+    const {isLandscape, cornerLT, cornerRB, midX} = resizeData
 
     if (isLandscape) {
-      this.labelPoints.setPosition(cornerLT.x + 150, cornerLT.y + 200)
-      this.labelMoves.setPosition(cornerLT.x + 150, cornerLT.y + 300)
-      this.buttonMix.setPosition(cornerLT.x + 150, cornerLT.y + 450)
-      this.buttonBomb.setPosition(cornerLT.x + 150, cornerLT.y + 550)
-      this.buttonTeleport.setPosition(cornerLT.x + 150, cornerLT.y + 650)
+      this.labelPoints.setPosition(cornerLT.x + 150, midX - 250)
+      this.labelMoves.setPosition(cornerLT.x + 150, midX - 150)
+
+      this.buttonMix.setPosition(cornerLT.x + 150, midX + 0)
+      this.buttonBomb.setPosition(cornerLT.x + 150, midX + 100)
+      this.buttonTeleport.setPosition(cornerLT.x + 150, midX + 200)
     } else {
       this.labelPoints.setPosition(cornerLT.x + 150, 70)
       this.labelMoves.setPosition(cornerLT.x + 150, 170)

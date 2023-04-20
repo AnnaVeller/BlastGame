@@ -22,15 +22,29 @@ export default class Field extends Container {
     this.createBlocks()
   }
 
-  addPanel() {
+  addPanel(alpha = 1) {
     const {rows, cols} = GAME_SETTINGS
     const fieldPanel = new Sprite({
       scene: this.game,
       key: 'field',
+      alpha,
       origin: {x: 0.088, y: 0.09},
       scale: {x: cols / 8 * 0.99, y: rows / 8}
     })
     this.add(fieldPanel)
+
+    return fieldPanel
+  }
+
+  showFade() {
+    const fade = this.addPanel(0)
+
+    this.game.tweens.add({
+      targets: fade,
+      alpha: 0.5,
+      duration: 300,
+      ease: Phaser.Math.Easing.Sine.InOut
+    })
   }
 
   reset() {
@@ -131,7 +145,7 @@ export default class Field extends Container {
 
     this.deleteBlocks(allDeleteBlocks)
 
-    return true
+    return 1
   }
 
   // ищет суперблоки среди удаляемых
