@@ -50,7 +50,22 @@ export const EVENTS = {
   endAction: 'endAction',
   pressShuffle: 'pressShuffle',
   pressBomb: 'pressBomb',
-  pressTeleport: 'pressTeleport'
+  pressTeleport: 'pressTeleport',
+  soundOn: 'soundOn',
+  soundOff: 'soundOff',
+}
+
+export const SOUNDS = {
+  win: 'win',
+  start: 'start',
+  error: 'error',
+  explosion: 'explosion',
+  fail: 'fail',
+  shuffle: 'shuffle',
+  buttonClick: 'buttonClick',
+  move: 'move',
+  tap: 'tap',
+  click: 'click',
 }
 
 export const RESOURCES = [
@@ -87,11 +102,79 @@ export const RESOURCES = [
     type: 'image',
     url: './assets/images/panel.png',
   },
+
+  {
+    key: 'soundOn',
+    type: 'image',
+    url: './assets/images/soundOn.png',
+  },
+  {
+    key: 'soundOff',
+    type: 'image',
+    url: './assets/images/soundOff.png',
+  },
+
   {
     key: 'marvin',
     type: 'font',
     url: './assets/fonts/Marvin/marvin.png',
     xml: './assets/fonts/Marvin/marvin.xml',
+  },
+
+  {
+    key: SOUNDS.tap,
+    type: 'audio',
+    url: './assets/sounds/tap.mp3',
+  },
+  {
+    key: SOUNDS.error,
+    type: 'audio',
+    url: './assets/sounds/error2.mp3',
+  },
+  {
+    key: SOUNDS.explosion,
+    type: 'audio',
+    url: './assets/sounds/explosion.mp3',
+  },
+  {
+    key: SOUNDS.fail,
+    type: 'audio',
+    url: './assets/sounds/fail2.mp3',
+  },
+  {
+    key: SOUNDS.shuffle,
+    type: 'audio',
+    url: './assets/sounds/shuffle5.mp3',
+  },
+  {
+    key: SOUNDS.buttonClick,
+    type: 'audio',
+    url: './assets/sounds/buttonClick.mp3',
+  },
+  {
+    key: SOUNDS.win,
+    type: 'audio',
+    url: './assets/sounds/win3.mp3',
+  },
+  {
+    key: SOUNDS.start,
+    type: 'audio',
+    url: './assets/sounds/start.mp3',
+  },
+  {
+    key: SOUNDS.move,
+    type: 'audio',
+    url: './assets/sounds/move.mp3',
+  },
+  {
+    key: SOUNDS.tap,
+    type: 'audio',
+    url: './assets/sounds/tap.mp3',
+  },
+  {
+    key: SOUNDS.click,
+    type: 'audio',
+    url: './assets/sounds/click.mp3',
   },
 
 ]

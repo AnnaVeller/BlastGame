@@ -6,7 +6,7 @@ import Sprite from '../Engine/Sprite'
 import BombBuster from '../UI/BombBuster'
 import TeleportBuster from '../UI/TeleportBuster'
 import MixBuster from '../UI/MixBuster'
-import {EVENTS, GAME_SETTINGS, TIME} from '../config'
+import {EVENTS, GAME_SETTINGS, TIME, SOUNDS} from '../config'
 
 const STATE = {
   game: 'game',
@@ -21,6 +21,8 @@ export default class GameScene extends Phaser.Scene {
   }
 
   init() {
+    this.audioSystem = this.scene.get('UI').getAudioSystem()
+
     this.moves = GAME_SETTINGS.moves
     this.shuffles = GAME_SETTINGS.shuffles
     this.points = 0
@@ -75,6 +77,8 @@ export default class GameScene extends Phaser.Scene {
   pressShuffle() {
     if (!this.isEnable || !this.field.isEnable) return
 
+    this.audioSystem.play(SOUNDS.shuffle)
+
     this.setMixState()
     this.field.shuffleBlocks()
     this.buttonMix.setText(--this.shuffles)
@@ -101,7 +105,15 @@ export default class GameScene extends Phaser.Scene {
 
         if (canDelete === -1) {
           block.wrongAnimation()
+          this.audioSystem.play(SOUNDS.error)
           return
+        }
+
+        if (canDelete === 1) {
+          this.audioSystem.play(SOUNDS.explosion)
+
+        } else {
+          this.audioSystem.play(SOUNDS.tap)
         }
 
         this.labelMoves.setText(--this.moves)
@@ -113,11 +125,13 @@ export default class GameScene extends Phaser.Scene {
 
         if (!canDeleteR) return
 
+        this.audioSystem.play('explosion')
         this.buttonBomb.setText(--this.bombs)
         this.setGameState()
         break
 
       case STATE.teleport:
+        this.audioSystem.play('click')
 
         if (this.blocksTap.includes(block)) {
           // убираем блок из выбранных
@@ -129,6 +143,8 @@ export default class GameScene extends Phaser.Scene {
           this.field.createStroke(block)
 
           if (this.blocksTap.length === 2) {
+            this.audioSystem.play('move')
+
             this.field.deleteStrokes()
 
             this.field.teleportBlocks(this.blocksTap[0], this.blocksTap[1])
@@ -149,6 +165,8 @@ export default class GameScene extends Phaser.Scene {
   }
 
   setMixState() {
+    this.audioSystem.play(SOUNDS.buttonClick)
+
     this.state = STATE.mix
     this.buttonMix.showChoose()
     this.buttonBomb.hideChoose()
@@ -159,6 +177,8 @@ export default class GameScene extends Phaser.Scene {
   setTeleportState() {
     if (this.state === STATE.mix) return
 
+    this.audioSystem.play(SOUNDS.buttonClick)
+
     this.state = STATE.teleport
     this.buttonTeleport.showChoose()
     this.buttonBomb.hideChoose()
@@ -166,6 +186,8 @@ export default class GameScene extends Phaser.Scene {
 
   setBombState() {
     if (this.state === STATE.mix) return
+
+    this.audioSystem.play(SOUNDS.buttonClick)
 
     this.state = STATE.bomb
     this.buttonTeleport.hideChoose()
@@ -199,13 +221,27 @@ export default class GameScene extends Phaser.Scene {
   }
 
   winGame() {
+    this.audioSystem.play(SOUNDS.win)
+
     this.disable()
     this.scene.launch('Win')
+    this.field.showFade()
+
+    this.buttonMix.disableInteractive()
+    this.buttonBomb.disableInteractive()
+    this.buttonTeleport.disableInteractive()
   }
 
   failGame() {
+    this.audioSystem.play(SOUNDS.fail)
+
     this.disable()
     this.scene.launch('Fail')
+    this.field.showFade()
+
+    this.buttonMix.disableInteractive()
+    this.buttonBomb.disableInteractive()
+    this.buttonTeleport.disableInteractive()
   }
 
   resize() {
