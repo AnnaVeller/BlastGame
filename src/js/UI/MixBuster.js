@@ -1,4 +1,4 @@
-import {EVENTS, GAME_SETTINGS} from '../config'
+import {EVENTS} from '../config'
 import Buster from './Buster'
 
 export default class MixBuster extends Buster {
@@ -9,7 +9,7 @@ export default class MixBuster extends Buster {
   getDefaultConfig(config) {
     return Object.assign(super.getDefaultConfig(config), {
       name: 'Перемешать',
-      maxValue: GAME_SETTINGS.shuffles,
+      maxValue: 0,
       action: EVENTS.pressShuffle
     }, config)
   }

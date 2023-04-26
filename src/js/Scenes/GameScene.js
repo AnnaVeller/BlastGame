@@ -6,7 +6,9 @@ import Sprite from '../Engine/Sprite'
 import BombBuster from '../UI/BombBuster'
 import TeleportBuster from '../UI/TeleportBuster'
 import MixBuster from '../UI/MixBuster'
-import {EVENTS, GAME_SETTINGS, TIME, SOUNDS} from '../config'
+import {EVENTS, TIME, SOUNDS} from '../config'
+import {GAME_SETTINGS, LEVELS, START_LEVEL} from '../configLevels'
+import Level from '../UI/Level'
 
 const STATE = {
   game: 'game',
@@ -18,43 +20,34 @@ const STATE = {
 export default class GameScene extends Phaser.Scene {
   constructor() {
     super('Game')
+
+    this.level = START_LEVEL
   }
 
   init() {
+    this.gameSettings = {...GAME_SETTINGS, ...LEVELS[this.level]}
+
     this.audioSystem = this.scene.get('UI').getAudioSystem()
 
-    this.moves = GAME_SETTINGS.moves
-    this.shuffles = GAME_SETTINGS.shuffles
+    this.moves = this.gameSettings.moves
+    this.shuffles = this.gameSettings.shuffles
     this.points = 0
-    this.bombs = GAME_SETTINGS.bombs
-    this.teleports = GAME_SETTINGS.teleports
-
-    this.isEnable = true
-
+    this.bombs = this.gameSettings.bombs
+    this.teleports = this.gameSettings.teleports
     this.state = STATE.game
-
     this.blocksTap = []
-  }
-
-  resetScene() {
-    this.init()
-    this.labelPoints.setText(this.points)
-    this.labelMoves.setText(this.moves)
-    this.buttonMix.reset()
-    this.buttonBomb.reset()
-    this.buttonTeleport.reset()
-    this.field.reset()
   }
 
   create() {
     new Sprite({scene: this, key: 'bg', origin: {x: 0, y: 0}})
 
     this.field = new Field({scene: this, x: 150, y: 150})
-    this.labelPoints = new Label({scene: this, name: 'Очки', endCount: GAME_SETTINGS.points})
-    this.labelMoves = new Label({scene: this, name: 'Ходы', beginCount: this.moves, endCount: this.moves})
+    this.labelPoints = new Label({scene: this, name: 'Очки'})
+    this.labelMoves = new Label({scene: this, name: 'Ходы'})
     this.buttonMix = new MixBuster({scene: this})
     this.buttonBomb = new BombBuster({scene: this})
     this.buttonTeleport = new TeleportBuster({scene: this})
+    this.levelLabel = new Level({scene: this})
 
     this.events.on(EVENTS.blockTap, this.onBlockTap, this) // тап на блок
     this.events.on(EVENTS.pressShuffle, this.pressShuffle, this)
@@ -63,6 +56,21 @@ export default class GameScene extends Phaser.Scene {
     this.events.on(EVENTS.endAction, this.endAction, this)
 
     this.scale.on('resize', this.resize, this)
+
+    this.resetScene()
+  }
+
+  resetScene() {
+    this.init()
+    this.labelPoints.resetText(0, this.gameSettings.points)
+    this.labelMoves.resetText(this.moves, this.moves)
+    this.buttonMix.reset(this.shuffles)
+    this.buttonBomb.reset(this.bombs)
+    this.buttonTeleport.reset(this.teleports)
+    this.field.reset(this.gameSettings)
+    this.levelLabel.setText(this.level)
+
+    this.enable()
     this.resize(this.scale.gameSize)
   }
 
@@ -89,7 +97,8 @@ export default class GameScene extends Phaser.Scene {
     this.points += count
     this.labelPoints.setText(this.points)
 
-    if (this.points >= GAME_SETTINGS.points || !this.moves) {
+    // проверка не закончилась ли игра
+    if (this.points >= this.gameSettings.points || !this.moves) {
       this.endGame()
     }
   }
@@ -118,13 +127,12 @@ export default class GameScene extends Phaser.Scene {
         }
 
         this.labelMoves.setText(--this.moves)
-        // this.moves === 0 && this.disable()
         break
 
       case STATE.bomb:
-        const canDeleteR = this.field.deleteRadius(block, GAME_SETTINGS.bombR)
+        const canDeleteBomb = this.field.deleteRadius(block, this.gameSettings.bombR)
 
-        if (!canDeleteR) return
+        if (!canDeleteBomb) return
 
         this.audioSystem.play('explosion')
         this.buttonBomb.setText(--this.bombs)
@@ -154,8 +162,6 @@ export default class GameScene extends Phaser.Scene {
             this.blocksTap = []
           }
         }
-        break
-      default:
         break
     }
   }
@@ -216,18 +222,18 @@ export default class GameScene extends Phaser.Scene {
     if (!this.isEnable) return
     this.disable()
 
-    this.points >= GAME_SETTINGS.points && this.winGame()
-    this.points < GAME_SETTINGS.points && this.failGame()
+    this.points >= this.gameSettings.points && this.winGame()
+    this.points < this.gameSettings.points && this.failGame()
 
     this.buttonMix.disableInteractive()
     this.buttonBomb.disableInteractive()
     this.buttonTeleport.disableInteractive()
-    this.field.showFade()
   }
 
   winGame() {
     this.audioSystem.play(SOUNDS.win)
 
+    this.level += 1
     this.scene.launch('Win')
   }
 
@@ -238,7 +244,6 @@ export default class GameScene extends Phaser.Scene {
   }
 
   resize() {
-    // стоп ресайза, если ушли с этой сцены
     if (!this.scene.settings.active) return
 
     const resizeData = resize(this)
@@ -246,15 +251,18 @@ export default class GameScene extends Phaser.Scene {
     const {isLandscape, cornerLT, cornerRB, midX} = resizeData
 
     if (isLandscape) {
-      this.labelPoints.setPosition(cornerLT.x + 150, midX - 250)
-      this.labelMoves.setPosition(cornerLT.x + 150, midX - 150)
+
+      this.levelLabel.setPosition(cornerLT.x + 150, cornerLT.y + 60)
+      this.labelPoints.setPosition(cornerLT.x + 150, midX - 230)
+      this.labelMoves.setPosition(cornerLT.x + 150, midX - 130)
 
       this.buttonMix.setPosition(cornerLT.x + 150, midX + 0)
       this.buttonBomb.setPosition(cornerLT.x + 150, midX + 100)
       this.buttonTeleport.setPosition(cornerLT.x + 150, midX + 200)
     } else {
-      this.labelPoints.setPosition(cornerLT.x + 150, 70)
-      this.labelMoves.setPosition(cornerLT.x + 150, 170)
+      this.levelLabel.setPosition(cornerLT.x + 150, 50)
+      this.labelPoints.setPosition(cornerLT.x + 150, 150)
+      this.labelMoves.setPosition(cornerLT.x + 150, 250)
 
       this.buttonMix.setPosition(cornerRB.x - 140, cornerLT.y + 50)
       this.buttonBomb.setPosition(cornerRB.x - 140, cornerLT.y + 150)

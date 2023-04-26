@@ -10,19 +10,21 @@ export default class Buster extends Container {
 
     this.createBusterBtn()
 
-    this.reset()
+    this.reset(this.config.maxValue)
   }
 
-  reset() {
+  reset(value) {
     this.enableInteractive()
-    this.setText(this.config.maxValue)
+
+    this.maxValue = value
+    this.setText(this.maxValue)
   }
 
   createBusterBtn() {
     this.button = new Sprite({
       scene: this.game,
       x: 0, y: 0,
-      key: ['button', 'button'],
+      key: ['ui', 'button'],
       scale: {x: 0.6, y: 0.6},
       interactive: true,
       OnPointerdown: () => this.pressBtn()
@@ -31,7 +33,7 @@ export default class Buster extends Container {
     this.stroke = new Sprite({
       scene: this.game,
       x: 0, y: 0,
-      key: ['button', 'button_stroke'],
+      key: ['ui', 'button_stroke'],
       scale: {x: 0.6, y: 0.6},
       visible: false,
     })
@@ -47,7 +49,7 @@ export default class Buster extends Container {
     this.counter = new BitmapText({
       scene: this.game,
       x: 0, y: 12,
-      text: `${this.config.maxValue}/${this.config.maxValue}`,
+      text: `${this.maxValue}/${this.maxValue}`,
       fontSize: 40
     })
 
@@ -103,7 +105,7 @@ export default class Buster extends Container {
   }
 
   setText(num) {
-    this.counter.text = `${num}/${this.config.maxValue}`
+    this.counter.text = `${num}/${this.maxValue}`
     num === 0 && this.disableInteractive()
   }
 

@@ -1,4 +1,4 @@
-import {GAME_SETTINGS, TIME} from '../config'
+import {SETTINGS, TIME} from '../config'
 
 export default class Animations {
 
@@ -15,17 +15,17 @@ export default class Animations {
   }
 
   static moveAllBlocks(allBlocks, time) {
-    const {cols, rows, size} = GAME_SETTINGS
+    const {size} = SETTINGS
 
-    for (let i = rows - 1; i >= 0; i--) {
-      for (let j = cols - 1; j >= 0; j--) {
+    for (let i = allBlocks.length - 1; i >= 0; i--) {
+      for (let j = allBlocks[i].length - 1; j >= 0; j--) {
         allBlocks[i][j].moveTo(j * size, i * size, time)
       }
     }
   }
 
   static moveBlocks(blocks, time) {
-    const {size} = GAME_SETTINGS
+    const {size} = SETTINGS
 
     for (let i = 0; i < blocks.length; i++) {
       const block = blocks[i]

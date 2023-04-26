@@ -4,6 +4,7 @@ import Sprite from '../Engine/Sprite'
 import Button from '../UI/Button'
 import FinishText from '../UI/FinishText'
 import {SOUNDS} from '../config'
+import Fade from '../UI/Fade'
 
 export default class FailScene extends Phaser.Scene {
   constructor() {
@@ -11,7 +12,8 @@ export default class FailScene extends Phaser.Scene {
   }
 
   create() {
-    new Sprite({scene: this, key: 'panel', x: 700, y: 700, scale: {x: 0.6, y: 0.6}})
+    new Fade({scene: this})
+    new Sprite({scene: this, key: ['ui', 'panel'], x: 700, y: 700, scale: {x: 0.9, y: 0.9}})
 
     this.audioSystem = this.scene.get('UI').getAudioSystem()
 

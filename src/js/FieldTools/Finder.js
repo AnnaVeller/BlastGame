@@ -1,10 +1,10 @@
-import {GAME_SETTINGS} from '../config'
-
 export default class Finder {
 
   // проверка на цвет блока
   static isSameColor(i, j, color, allBlocks) {
-    const {rows, cols} = GAME_SETTINGS
+    const rows = allBlocks.length
+    const cols = allBlocks[0].length
+
     return i >= 0 && j >= 0 && i < rows && j < cols && allBlocks[i][j] && allBlocks[i][j].getColor() === color
   }
 
@@ -41,7 +41,8 @@ export default class Finder {
   }
 
   static getElement(i, j, allBlocks) {
-    const {rows, cols} = GAME_SETTINGS
+    const rows = allBlocks.length
+    const cols = allBlocks[0].length
 
     return i >= 0 && j >= 0 && i < rows && j < cols && allBlocks[i][j]
   }
@@ -73,7 +74,7 @@ export default class Finder {
 
   static getBlocksLine(block, allBlocks) {
     let blockLine = [block]
-    const {cols} = GAME_SETTINGS
+    const cols = allBlocks[0].length
 
     for (let j = 0; j < cols; j++) {
       blockLine = this.addElement(blockLine, block.i, j, allBlocks)
@@ -84,7 +85,7 @@ export default class Finder {
 
   static getBlocksCol(block, allBlocks) {
     let blockLine = [block]
-    const {rows} = GAME_SETTINGS
+    const rows = allBlocks.length
 
     for (let i = 0; i < rows; i++) {
       blockLine = this.addElement(blockLine, i, block.j, allBlocks)

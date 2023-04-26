@@ -1,21 +1,5 @@
-export const IS_EXPORT_FIELD = true
-
-export const GAME_SETTINGS = {
-  rows: 8,
-  cols: 8,
-  size: 171,
-  minCells: 2, // минимальное кол-во клеток для удаления
-  availableColors: ['blue', 'green', 'purple', 'red', 'yellow'],
-  colors: ['green', 'red', 'yellow', 'blue'],
-  shuffles: 30, // кол-во перемешиваний
-  points: 555, // кол-во очков
-  moves: 77, // кол-во ходов
-  bombs: 3, // кол-во бомб
-  bombR: 3, // радиус сжигания тайлов от бомбы
-  teleports: 7,
-  superBlockCount: 8, // столько блоков нужно чтобы образовался супер блок
-  superBlockR: 4,
-  rocketBlockCount: 5, // столько блоков нужно чтобы образовалась ракета
+export const SETTINGS = {
+  size: 171, // размер одной клетки
 }
 
 export const TIME = {
@@ -27,8 +11,10 @@ export const TIME = {
   delayFall: 50, // задержка одного блока при падении
   spawn: 300,
   delete: 200,
+  timeAcc: 100 // ускоритель появления новых клеток после падения
 }
 
+// пока убрала это
 export const GAME_LEVEL = [
   ['yellow', 'yellow', 'blue', 'blue', 'blue', 'blue', 'yellow', 'yellow'],
   ['yellow', 0, 'blue', 'blue', 'blue', 'blue', 0, 'yellow'],
@@ -39,11 +25,6 @@ export const GAME_LEVEL = [
   [0, 0, 'blue', 'blue', 'blue', 'blue', 0, 0],
   ['blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue'],
 ]
-
-if (IS_EXPORT_FIELD) {
-  GAME_SETTINGS.rows = GAME_LEVEL.length
-  GAME_SETTINGS.cols = GAME_LEVEL[0].length
-}
 
 export const EVENTS = {
   blockTap: 'blockTap',

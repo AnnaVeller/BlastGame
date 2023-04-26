@@ -1,9 +1,9 @@
-import {GAME_SETTINGS} from '../config'
+import {SETTINGS} from '../config'
 
 export default class Resizer {
 
-  static resize({height, width, scaleFactor, isLandscape, midX, midY, aspectRatio, cornerLT}) {
-    const {cols, rows, size} = GAME_SETTINGS
+  static resize({height, width, scaleFactor, isLandscape, midX, midY, aspectRatio, cornerLT}, {cols, rows}) {
+    const {size} = SETTINGS
 
     const fieldHeight = rows * size
     const fieldWidth = cols * size

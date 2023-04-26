@@ -1,10 +1,10 @@
 import Phaser from 'phaser'
-import GameScene from "./js/Scenes/GameScene"
-import BootScene from "./js/Scenes/BootScene"
-import StartScene from "./js/Scenes/StartScene"
-import WinScene from "./js/Scenes/WinScene"
-import FailScene from "./js/Scenes/FailScene"
-import UIScene from "./js/Scenes/UIScene"
+import GameScene from './js/Scenes/GameScene'
+import BootScene from './js/Scenes/BootScene'
+import StartScene from './js/Scenes/StartScene'
+import WinScene from './js/Scenes/WinScene'
+import FailScene from './js/Scenes/FailScene'
+import UIScene from './js/Scenes/UIScene'
 
 export const GAME_DEFAULT_SIZE = 1400
 

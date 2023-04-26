@@ -1,4 +1,3 @@
-import {EVENTS, GAME_SETTINGS, TIME} from '../config'
 import BlockStroke from './BlockStroke'
 import Container from '../Engine/Container'
 import Shuffler from '../FieldTools/Shuffler'
@@ -9,45 +8,18 @@ import Resizer from '../FieldTools/Resizer'
 import Teleport from '../FieldTools/Teleport'
 import Animations from '../FieldTools/Animations'
 import Explosion from './Explosion'
+import FieldBackground from './FieldBackground'
 import {STATE} from './Block'
-import Sprite from '../Engine/Sprite'
+import {EVENTS, TIME} from '../config'
 
 export default class Field extends Container {
   constructor(config) {
     super(config)
-
-    this.isEnable = true
-
-    this.addPanel()
-    this.createBlocks()
   }
 
-  addPanel(alpha = 1) {
-    const {rows, cols} = GAME_SETTINGS
-    const fieldPanel = new Sprite({
-      scene: this.game,
-      key: 'field',
-      alpha,
-      origin: {x: 0.088, y: 0.09},
-      scale: {x: cols / 8 * 0.99, y: rows / 8}
-    })
-    this.add(fieldPanel)
+  reset(gameSettings) {
+    this.gameSettings = gameSettings
 
-    return fieldPanel
-  }
-
-  showFade() {
-    const fade = this.addPanel(0)
-
-    this.game.tweens.add({
-      targets: fade,
-      alpha: 0.5,
-      duration: 300,
-      ease: Phaser.Math.Easing.Sine.InOut
-    })
-  }
-
-  reset() {
     this.isEnable = true
 
     const l = this.list.length
@@ -55,12 +27,18 @@ export default class Field extends Container {
       this.list[0].destroy()
     }
 
-    this.addPanel()
-    this.createBlocks(true)
+    const bg = new FieldBackground({
+      scene: this.game,
+      rows: this.gameSettings.rows,
+      cols: this.gameSettings.cols
+    })
+    this.add(bg)
+
+    this.createBlocks()
   }
 
-  createBlocks(isRandom) {
-    this.allBlocks = Creator.createBlocks(this, !isRandom)
+  createBlocks() {
+    this.allBlocks = Creator.createBlocks(this.game, this.gameSettings)
 
     this.allBlocks.forEach(row => row.forEach(el => this.add(el)))
     this.doCorrectDepth()
@@ -102,7 +80,7 @@ export default class Field extends Container {
   }
 
   deleteCloseBlocks(mainBlock) {
-    const {minCells, superBlockCount, rocketBlockCount} = GAME_SETTINGS
+    const {minCells, bombBlockCount, rocketBlockCount} = this.gameSettings
 
     const delArray = Finder.recursiveFind(mainBlock, [], this.allBlocks)
 
@@ -110,7 +88,7 @@ export default class Field extends Container {
     if (delArray.length < minCells) return -1
     this.disable()
 
-    if (delArray.length >= superBlockCount) {
+    if (delArray.length >= bombBlockCount) {
       // выбрасываем из рассмотрения тапнутый блок
       delArray.splice(delArray.indexOf(mainBlock), 1)
       mainBlock.changeToSuperBlock()
@@ -172,7 +150,7 @@ export default class Field extends Container {
   getDeletingBlocks(block) {
     switch (block.getType()) {
       case STATE.bomb:
-        return Finder.getBlocksAround(block, GAME_SETTINGS.superBlockR, this.allBlocks)
+        return Finder.getBlocksAround(block, this.gameSettings.bombBlockR, this.allBlocks)
       case STATE.rocket:
         return Finder.getBlocksLine(block, this.allBlocks)
       case STATE.rocketVertical:
@@ -192,10 +170,8 @@ export default class Field extends Container {
 
   // расположить фишки в верном порядке по высоте
   doCorrectDepth() {
-    const {cols, rows} = GAME_SETTINGS
-
-    for (let i = rows - 1; i >= 0; i--) {
-      for (let j = cols - 1; j >= 0; j--) {
+    for (let i = this.allBlocks.length - 1; i >= 0; i--) {
+      for (let j = this.allBlocks[i].length - 1; j >= 0; j--) {
         this.bringToTop(this.allBlocks[i][j])
       }
     }
@@ -206,26 +182,27 @@ export default class Field extends Container {
 
     Animations.deleteAnimation(delArray)
 
-    const timeAcc = 100 // ускоритель появления новых клеток после падения
-    const timeAdd = 10 // добавка после спавна
-
     this.game.time.delayedCall(fallDelay, Animations.fallAnimation, [fallArray], this)
-    this.game.time.delayedCall(maxExecutionTime - timeAcc + fallDelay, this.afterFall, [fallArray, delArray], this)
-    this.game.time.delayedCall(maxExecutionTime - timeAcc + fallDelay, this.fillEmptyCells, [], this)
-    this.game.time.delayedCall(maxExecutionTime - timeAcc + fallDelay + timeAdd + TIME.spawn, this.endAction, [delArray], this)
+    this.game.time.delayedCall(maxExecutionTime - TIME.timeAcc + fallDelay, this.updateData, [fallArray, delArray], this)
+    this.game.time.delayedCall(maxExecutionTime - TIME.timeAcc + fallDelay, this.spawnNewBlocks, [fallArray, delArray], this)
+    this.game.time.delayedCall(maxExecutionTime - TIME.timeAcc + fallDelay + TIME.spawn, this.endMoveAnimation, [delArray], this)
   }
 
-  endAction(delBlocks) {
-    this.enable()
+  updateData(fallArray, deletingArray) {
+    // удаляем из базы эл-ты, которые лопнули
+    deletingArray.forEach(block => this.allBlocks[block.i][block.j] = null)
 
-    // дестроим все удаленные кубы
-    delBlocks.forEach(el => el.destroy())
+    // записываем новые значения для упавших элементов
+    fallArray.forEach(el => {
+      this.allBlocks[el.block.i][el.block.j] = null
 
-    this.game.events.emit(EVENTS.endAction, delBlocks.length)
+      el.block.i += el.yCount
+      this.allBlocks[el.block.i][el.block.j] = el.block
+    })
   }
 
-  fillEmptyCells() {
-    const [changeArray, spawnArray] = Creator.fillEmptyCells(this, this.allBlocks)
+  spawnNewBlocks() {
+    const [changeArray, spawnArray] = Creator.fillEmptyCells(this.game, this.allBlocks, this.gameSettings)
     this.allBlocks = changeArray
     spawnArray.forEach(el => this.add(el))
     this.doCorrectDepth()
@@ -233,19 +210,14 @@ export default class Field extends Container {
     Animations.spawnAnimation(spawnArray)
   }
 
-  // TODO как переписать?
-  afterFall(fallArray, deletingArray) {
-    deletingArray.forEach(block => {
-      delete this.allBlocks[block.i][block.j]
-      this.allBlocks[block.i][block.j] = null
-    })
+  // запускается после окончания всех анимаций хода
+  endMoveAnimation(delBlocks) {
+    this.enable()
 
-    fallArray.forEach(el => {
-      this.allBlocks[el.block.i][el.block.j] = null
+    // дестроим все удаленные кубы
+    delBlocks.forEach(el => el.destroy())
 
-      el.block.i += el.yCount
-      this.allBlocks[el.block.i][el.block.j] = el.block
-    })
+    this.game.events.emit(EVENTS.endAction, delBlocks.length)
   }
 
   createStroke(block) {
@@ -271,7 +243,7 @@ export default class Field extends Container {
   }
 
   resizeField(data) {
-    const {scale, x, y} = Resizer.resize(data)
+    const {scale, x, y} = Resizer.resize(data, this.gameSettings)
 
     this.scale = scale
     this.setPosition(x, y)

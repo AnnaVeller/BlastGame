@@ -1,11 +1,7 @@
-import {GAME_LEVEL, GAME_SETTINGS, IS_EXPORT_FIELD} from '../config'
+import {SETTINGS} from '../config'
 import Block from '../Field/Block'
 
 export default class Creator {
-
-  static exportColor(i, j) {
-    return !GAME_LEVEL[i][j] ? 'green' : GAME_LEVEL[i][j]
-  }
 
   static getRandomColor(colors) {
     const rand = Math.floor(Math.random() * colors.length)
@@ -13,44 +9,35 @@ export default class Creator {
     return colors[rand]
   }
 
-  static createBlocks(state, isExportField = IS_EXPORT_FIELD) {
-    const {cols, rows, size, colors} = GAME_SETTINGS
-    const allBlocks = Array.from(Array(rows), () => new Array(cols))
-
-    for (let i = rows - 1; i >= 0; i--) {
-      for (let j = cols - 1; j >= 0; j--) {
-        allBlocks[i][j] = new Block({
-          scene: state.game,
-          x: j * size, y: i * size,
-          i: i, j: j,
-          key: isExportField ? this.exportColor(i, j) : this.getRandomColor(colors)
-        })
-
-      }
-    }
-
+  static createBlocks(scene, {cols, rows, colors}) {
+    const [allBlocks] = this._createBlocks(scene, null, {cols, rows, colors}, true)
     return allBlocks
   }
 
-  // TODO очень похоже на метод выше
-  static fillEmptyCells(state, existArray) {
-    const {cols, rows, size, colors} = GAME_SETTINGS
-    const spawnArray = []
-    const allBlocks = Array.from(Array(rows), () => new Array(cols))
+  static fillEmptyCells(scene, existArray, {cols, rows, colors}) {
+    const [allBlocks, spawnArray] = this._createBlocks(scene, existArray, {cols, rows, colors}, false)
+
+    return [allBlocks, spawnArray]
+  }
+
+  static _createBlocks(scene, existArray, {cols, rows, colors}, visible) {
+    const spawnArray = [] // массив блоков, которые мы создаем сейчас
+    const {size} = SETTINGS
+    const allBlocks = Array.from(Array(rows), () => new Array(cols)) // полный массив блоков
 
     for (let i = rows - 1; i >= 0; i--) {
       for (let j = cols - 1; j >= 0; j--) {
-        if (existArray[i][j]) {
+        // существующие блоки не перезаписываем
+        if (existArray && existArray[i][j]) {
           allBlocks[i][j] = existArray[i][j]
           continue
         }
 
         const block = new Block({
-          scene: state.game,
+          scene,
           x: j * size, y: i * size,
           i: i, j: j,
-          isNew: true,
-          visible: false,
+          visible,
           key: this.getRandomColor(colors)
         })
 

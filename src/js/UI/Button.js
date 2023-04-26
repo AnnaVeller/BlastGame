@@ -83,7 +83,7 @@ export default class Button extends Container {
   getDefaultConfig(config) {
     return Object.assign(super.getDefaultConfig(config), {
       text: 'default',
-      buttonImg: ['button', 'button_green'],
+      buttonImg: ['ui', 'button_green'],
       textFont: 60,
       x: 700, y: 800,
       scale: {x: 0, y: 0},

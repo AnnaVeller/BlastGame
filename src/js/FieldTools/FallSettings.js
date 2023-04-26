@@ -44,7 +44,7 @@ export default class FallSettings {
         deltaY.shift()
       }
 
-      settings[`${value[index]}${key}`] = deltaY
+      settings[`${value[index]},${key}`] = deltaY
     })
 
     return settings
@@ -55,10 +55,10 @@ export default class FallSettings {
 
     /*
     * const settings = {
-    *    14: [5],
-    *    32: [3, 3, 3],
-    *    33: [1, 1, 1],
-    *    55: [1, 0, 2, 0, 3]
+    *    1,4: [5],
+    *    3,2: [3, 3, 3],
+    *    3,3: [1, 1, 1],
+    *    5,5: [1, 0, 2, 0, 3]
     *  }
     *  */
 
@@ -72,11 +72,13 @@ export default class FallSettings {
 
         const timeExecution = i * TIME.delayFall + TIME.fallOneCell * conditions[i]
 
+        const cellArray = cell.split(',')
+
         // если поле не прямоугольное (напр. сложная форма)
-        if (!allBlocks[cell[0] - i - 1][cell[1]]) continue
+        if (!allBlocks[cellArray[0] - i - 1][cellArray[1]]) continue
 
         drawArray.push({
-          block: allBlocks[cell[0] - i - 1][cell[1]],
+          block: allBlocks[cellArray[0] - i - 1][cellArray[1]],
           oneTime: TIME.fallOneCell,
           delay: i * TIME.delayFall,
           yCount: conditions[i]

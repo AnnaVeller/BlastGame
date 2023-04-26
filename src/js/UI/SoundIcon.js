@@ -6,8 +6,8 @@ export default class SoundIcon extends Container {
   constructor(config) {
     super(config)
 
-    this.soundOn = new Sprite({scene: this.game, key: 'soundOn', alpha: 0.8})
-    this.soundOff = new Sprite({scene: this.game, key: 'soundOff', alpha: 0.8, visible: false})
+    this.soundOn = new Sprite({scene: this.game, key: ['ui', 'soundOn'], alpha: 0.8})
+    this.soundOff = new Sprite({scene: this.game, key: ['ui', 'soundOff'], alpha: 0.8, visible: false})
     this.add([this.soundOn, this.soundOff])
 
     this.soundOn.setInteractive()

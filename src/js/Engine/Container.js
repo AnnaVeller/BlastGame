@@ -1,10 +1,10 @@
 export default class Container extends Phaser.GameObjects.Container {
   constructor(config) {
-    super(config.scene, config.x, config.y)
+    super(config.scene, 0, 0)
     config.scene.add.existing(this)
 
     this.game = config.scene
-    this.config = this.getDefaultConfig(config)
+    this.config = Object.assign(this.getDefaultConfig(config), config)
 
     this.setScale(this.config.scale.x, this.config.scale.y)
     this.setVisible(this.config.visible)

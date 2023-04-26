@@ -6,6 +6,7 @@ export default class Label extends Container {
   constructor(config) {
     super(config)
 
+    this.endCount = this.config.endCount
     this.createLabel()
   }
 
@@ -13,7 +14,7 @@ export default class Label extends Container {
     const label = new Sprite({
       scene: this.game,
       x: 0, y: 0,
-      key: ['button', 'label'],
+      key: ['ui', 'label'],
       scale: {x: 0.6, y: 0.6}
     })
 
@@ -38,7 +39,12 @@ export default class Label extends Container {
   }
 
   setText(num) {
-    this.counter.text = `${num}/${this.config.endCount}`
+    this.counter.text = `${num}/${this.endCount}`
+  }
+
+  resetText(from, to) {
+    this.endCount = to
+    this.setText(from)
   }
 
   getDefaultConfig(config) {

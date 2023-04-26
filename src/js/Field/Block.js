@@ -1,4 +1,4 @@
-import {EVENTS, GAME_SETTINGS} from '../config'
+import {EVENTS, SETTINGS} from '../config'
 import BlockSimple from './BlockSimple'
 import BlockBomb from './BlockBomb'
 import Container from '../Engine/Container'
@@ -123,23 +123,13 @@ export default class Block extends Container {
     this.rotate(0, time / 4, time * 3 / 4)
   }
 
-  pressBtnAnimation() {
-    this.game.tweens.add({
-      targets: this,
-      scaleX: {from: 1, to: 0.9},
-      scaleY: {from: 1, to: 0.9},
-      duration: 100,
-      yoyo: true
-    })
-  }
-
   // падение блока на yCount блоков
   blockFall(yCount, oneTime = 100, delay = 0) {
     this.disable()
 
     this.game.tweens.add({
       targets: this,
-      y: (this.i + yCount) * GAME_SETTINGS.size,
+      y: (this.i + yCount) * SETTINGS.size,
       delay,
       duration: yCount * oneTime,
       ease: Phaser.Math.Easing.Quadratic.In,

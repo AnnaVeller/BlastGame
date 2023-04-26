@@ -1,12 +1,12 @@
 import Container from '../Engine/Container'
-import {GAME_SETTINGS} from '../config'
+import {GAME_SETTINGS, LEVELS, START_LEVEL} from '../configLevels'
 import BitmapText from '../Engine/BitmapText'
 
 export default class Instruction extends Container {
   constructor(config) {
     super(config)
 
-    const {points, moves, bombs, shuffles, teleports} = GAME_SETTINGS
+    const {points, moves, bombs, shuffles, teleports} = {...GAME_SETTINGS, ...LEVELS[START_LEVEL]}
 
     const text1 = new BitmapText({
       scene: this.game,
@@ -30,7 +30,7 @@ export default class Instruction extends Container {
       alpha: 0.9,
       text: `
       - ${bombs} бомбы
-      - ${shuffles} перемешивания
+      - ${shuffles} перемешиваний
       - ${teleports} телепортов`,
       fontSize: 26,
     })

@@ -1,4 +1,4 @@
-import {EVENTS, GAME_SETTINGS} from '../config'
+import {EVENTS} from '../config'
 import Buster from './Buster'
 
 export default class BombBuster extends Buster {
@@ -9,7 +9,7 @@ export default class BombBuster extends Buster {
   getDefaultConfig(config) {
     return Object.assign(super.getDefaultConfig(config), {
       name: 'Бомбы',
-      maxValue: GAME_SETTINGS.bombs,
+      maxValue: 0,
       action: EVENTS.pressBomb
     }, config)
   }
