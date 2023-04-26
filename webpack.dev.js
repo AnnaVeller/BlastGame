@@ -1,12 +1,15 @@
 const webpack = require("webpack")
 const path = require("path")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
-const {CleanWebpackPlugin} = require("clean-webpack-plugin")
 const CopyPlugin = require("copy-webpack-plugin")
 
 module.exports = {
   mode: "development",
   devtool: "eval-cheap-source-map",
+  output: {
+    clean: true, // Clean the output directory before emit
+    path: path.resolve(__dirname, "dist"),
+  },
   module: {
     rules: [
       {
@@ -26,11 +29,19 @@ module.exports = {
   plugins: [
     new CopyPlugin({
       patterns: [
-        {from: "src/assets", to: "assets"},
+        { // не копируем изображения в папках
+          from: "src/assets/images/*",
+          to: "assets/images/[name][ext]"
+        },
+        {
+          from: "src/assets/sounds",
+          to: "assets/sounds"
+        },
+        {
+          from: "src/assets/fonts",
+          to: "assets/fonts"
+        },
       ],
-    }),
-    new CleanWebpackPlugin({
-      root: path.resolve(__dirname, "../")
     }),
     new webpack.DefinePlugin({
       CANVAS_RENDERER: JSON.stringify(true),
