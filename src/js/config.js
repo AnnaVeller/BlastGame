@@ -81,10 +81,10 @@ export const RESOURCES = [
     json: './assets/images/blocks.json',
   },
   {
-    key: 'button',
+    key: 'ui',
     type: 'atlas',
-    url: './assets/images/button.png',
-    json: './assets/images/button.json',
+    url: './assets/images/ui.png',
+    json: './assets/images/ui.json',
   },
   {
     key: 'explosionSpritesheet',
@@ -93,34 +93,11 @@ export const RESOURCES = [
     config: {frameWidth: 256, frameHeight: 256}
   },
   {
-    key: 'field',
-    type: 'image',
-    url: './assets/images/field.png',
-  },
-  {
-    key: 'panel',
-    type: 'image',
-    url: './assets/images/panel.png',
-  },
-
-  {
-    key: 'soundOn',
-    type: 'image',
-    url: './assets/images/soundOn.png',
-  },
-  {
-    key: 'soundOff',
-    type: 'image',
-    url: './assets/images/soundOff.png',
-  },
-
-  {
     key: 'marvin',
     type: 'font',
     url: './assets/fonts/Marvin/marvin.png',
     xml: './assets/fonts/Marvin/marvin.xml',
   },
-
   {
     key: SOUNDS.tap,
     type: 'audio',
@@ -129,7 +106,7 @@ export const RESOURCES = [
   {
     key: SOUNDS.error,
     type: 'audio',
-    url: './assets/sounds/error2.mp3',
+    url: './assets/sounds/error.mp3',
   },
   {
     key: SOUNDS.explosion,
@@ -139,12 +116,12 @@ export const RESOURCES = [
   {
     key: SOUNDS.fail,
     type: 'audio',
-    url: './assets/sounds/fail2.mp3',
+    url: './assets/sounds/fail.mp3',
   },
   {
     key: SOUNDS.shuffle,
     type: 'audio',
-    url: './assets/sounds/shuffle5.mp3',
+    url: './assets/sounds/shuffle.mp3',
   },
   {
     key: SOUNDS.buttonClick,
@@ -154,7 +131,7 @@ export const RESOURCES = [
   {
     key: SOUNDS.win,
     type: 'audio',
-    url: './assets/sounds/win3.mp3',
+    url: './assets/sounds/win.mp3',
   },
   {
     key: SOUNDS.start,
@@ -165,11 +142,6 @@ export const RESOURCES = [
     key: SOUNDS.move,
     type: 'audio',
     url: './assets/sounds/move.mp3',
-  },
-  {
-    key: SOUNDS.tap,
-    type: 'audio',
-    url: './assets/sounds/tap.mp3',
   },
   {
     key: SOUNDS.click,
